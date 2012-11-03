@@ -9,6 +9,7 @@ public class ShoppingList extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("Sabi nila sampol");
         setContentView(R.layout.main);
     }
 
