@@ -4,5 +4,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_shopping_list">Shopping List</string>
+    <string name="add_shopping_list">Add a new shopping list</string>
+    <string name="gray_button_desc">The image button that is clicked to add a new shopping list.</string>
+    <string name="title_activity_add_modify">Create Shopping List</string>
+    <string name="create_new_list">Create new list</string>
 
 </resources>
