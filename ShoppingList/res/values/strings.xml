@@ -16,5 +16,6 @@
     <string name="empty_string"></string>
     <string name="enter_shopping_list_name">Enter shopping list name</string>
     <string name="default_shopping_list_name">Shopping List 1</string>
+    <string name="title_activity_shop">Shop</string>
 
 </resources>
