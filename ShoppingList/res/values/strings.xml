@@ -8,5 +8,13 @@
     <string name="gray_button_desc">The image button that is clicked to add a new shopping list.</string>
     <string name="title_activity_add_modify">Create Shopping List</string>
     <string name="create_new_list">Create new list</string>
+    <string name="title_activity_lists">Lists</string>
+    <string name="def">X</string>
+    <string name="left_button">A button that is clicked to decrease item quantity</string>
+    <string name="right_button">A button used to increase item quantity</string>
+    <string name="itemHint">Enter item name</string>
+    <string name="empty_string"></string>
+    <string name="enter_shopping_list_name">Enter shopping list name</string>
+    <string name="default_shopping_list_name">Shopping List 1</string>
 
 </resources>

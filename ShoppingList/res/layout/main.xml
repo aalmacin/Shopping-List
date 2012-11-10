@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="5dp" >
+    android:padding="@dimen/default_padding" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,29 +16,31 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/gray_button_desc"
             android:src="@drawable/gray_plus_sign" />
-
+
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/addShoppingListTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:paddingLeft="5dp"
+            android:paddingLeft="@dimen/default_padding"
             android:text="@string/add_shopping_list"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/darker_gray" />
 
     </LinearLayout>
-
+
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-        </LinearLayout>
+        </ListView>
 
     </ScrollView>
 
