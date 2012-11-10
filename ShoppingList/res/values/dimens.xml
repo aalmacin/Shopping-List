@@ -6,4 +6,6 @@
     <dimen name="itemSize">200dp</dimen>
     <dimen name="default_padding">5dp</dimen>
     <dimen name="specialPadding">10dp</dimen>
+    <dimen name="quantity_textView">100dp</dimen>
+    <dimen name="scrollViewHeight">300dp</dimen>
 </resources>

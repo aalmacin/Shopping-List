@@ -24,21 +24,11 @@
         	android:icon="@drawable/ic_launcher"
             android:name=".AddModify"
             android:label="@string/title_activity_add_modify" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
         	android:icon="@drawable/ic_launcher"
             android:name=".Shop"
             android:label="@string/title_activity_shop" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
