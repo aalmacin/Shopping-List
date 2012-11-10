@@ -18,6 +18,7 @@ public class ShoppingListApp extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        ShoppingListItem badItem = new ShoppingListItem(this);
         addShoppingListImageButton = (ImageButton)findViewById(R.id.addShoppingListImageButton);
         context = this;
         addShoppingListImageButton.setOnClickListener(addShoppingListListener);

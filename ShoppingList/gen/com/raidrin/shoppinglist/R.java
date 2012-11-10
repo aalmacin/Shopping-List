@@ -32,8 +32,7 @@ public final class R {
         public static final int addModifyLinearLayout=0x7f080000;
         public static final int addShoppingListImageButton=0x7f08006f;
         public static final int addShoppingListTextView=0x7f080070;
-        public static final int button1=0x7f08006b;
-        public static final int button2=0x7f08006c;
+        public static final int cancelButton=0x7f08006c;
         public static final int checkBox1=0x7f080075;
         public static final int createItemDecreaseImageButton=0x7f080009;
         public static final int createItemDecreaseImageButton10=0x7f080036;
@@ -121,6 +120,7 @@ public final class R {
         public static final int listView1=0x7f080071;
         public static final int menu_settings=0x7f080076;
         public static final int modifyCreateTextView=0x7f080001;
+        public static final int saveButton=0x7f08006b;
         public static final int scrollView1=0x7f080006;
         public static final int showItemItemTextView=0x7f080073;
         public static final int showItemLinearLayout=0x7f080072;
