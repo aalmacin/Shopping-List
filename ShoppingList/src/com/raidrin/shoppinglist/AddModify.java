@@ -24,7 +24,6 @@ public class AddModify extends Activity {
 	private Context context;
 	private TableLayout shoppingListTableLayout;
 	private EditText shoppingListEditText;
-	private Controller controller;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,8 @@ public class AddModify extends Activity {
         cancelButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				startActivity(mainIntent);				
+				startActivity(mainIntent);
+				onDestroy();
 			}
 		});
         saveButton = (Button)findViewById(R.id.saveButton);
@@ -55,16 +55,17 @@ public class AddModify extends Activity {
 					if(tempItem.getShoppingListName() != "" && tempItem.getQuantity()>0)
 					{
 				        Log.e(TAG_NAME, "Add Item: "+tempItem.getShoppingListName()+" Quantity: "+tempItem.getQuantity());
+				        Controller controller = new Controller(context);
 				        controller.addItem(tempItem.getShoppingListName(),tempItem.getQuantity());
+				        controller.close();
 			        }
 				}				
 				startActivity(mainIntent);
 			}
 		});
         
-        controller = new Controller(this);
-        
         runtimeCreateRows();
+        
     }
 
     private void runtimeCreateRows() {
