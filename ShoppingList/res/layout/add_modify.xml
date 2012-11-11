@@ -17,13 +17,15 @@
         android:fadingEdge="horizontal"
         android:padding="5dp"
         android:text="@string/create_new_list" />
-
+
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/shoppingListEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:imeOptions="actionNone"
+        android:inputType="text"
+        android:singleLine="true"
         android:text="@string/default_shopping_list_name" />
 
     <LinearLayout
@@ -56,11 +58,11 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/scrollViewHeight"
         android:padding="5dp" >
-
+
         <TableLayout
             android:id="@+id/shoppingListTableLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
 
         </TableLayout>
     </ScrollView>

@@ -2,24 +2,29 @@ package com.raidrin.shoppinglist;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TableLayout;
 public class AddModify extends Activity {
 
     private static final int MAX_ITEMS = 20;
+	private static final String TAG_NAME = "Debug";
 	private Button cancelButton;
 	private Button saveButton;
 
 	private Intent mainIntent;
 	private Context context;
 	private TableLayout shoppingListTableLayout;
-	private ShoppingListSQLHelper shoppingListSQLHelper;
+	private EditText shoppingListEditText;
+	private Controller controller;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,7 +32,8 @@ public class AddModify extends Activity {
         setContentView(R.layout.add_modify);
         context = this;
 
-        shoppingListSQLHelper = new ShoppingListSQLHelper(this, SQLiteInfo.DATABASE_NAME, null, SQLiteInfo.DATABASE_VERSION);
+        shoppingListEditText = (EditText) findViewById(R.id.shoppingListEditText);
+        shoppingListEditText.selectAll();
     	shoppingListTableLayout = (TableLayout)findViewById(R.id.shoppingListTableLayout);
     	
         mainIntent = new Intent(context,ShoppingListApp.class);
@@ -48,12 +54,15 @@ public class AddModify extends Activity {
 					ShoppingListItem tempItem = (ShoppingListItem)shoppingListTableLayout.getChildAt(i);
 					if(tempItem.getShoppingListName() != "" && tempItem.getQuantity()>0)
 					{
-				        Log.e("Debug", "Add Item: "+tempItem.getShoppingListName()+" Quantity: "+tempItem.getQuantity());
+				        Log.e(TAG_NAME, "Add Item: "+tempItem.getShoppingListName()+" Quantity: "+tempItem.getQuantity());
+				        controller.addItem(tempItem.getShoppingListName(),tempItem.getQuantity());
 			        }
-				}
+				}				
 				startActivity(mainIntent);
 			}
 		});
+        
+        controller = new Controller(this);
         
         runtimeCreateRows();
     }
@@ -64,7 +73,6 @@ public class AddModify extends Activity {
     		shoppingListTableLayout.addView(new ShoppingListItem(this));
     	}
 	}
-
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.add_modify, menu);
