@@ -2,6 +2,8 @@ package com.raidrin.shoppinglist;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,7 +12,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 public class Controller {
     public static final int DATABASE_VERSION = 1;
@@ -75,6 +79,23 @@ public class Controller {
 //		Log.d(TAG_NAME, "The id is changed to: "+id);
 		return id;
 	}
+	
+	public String getShoppingNameById(int id) {
+		String value = null;
+		DBHelper dbHelper = new DBHelper();
+		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, new String[]{LIST_NAME}, LIST_ID+"='"+id+"'", null, null, null, null);
+		if(tempCursor.moveToFirst())
+		{
+			while(!tempCursor.isAfterLast())
+			{
+				value = tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME));
+				tempCursor.moveToNext();
+			}
+		}
+		dbHelper.close();
+//		Log.d(TAG_NAME, "The id is changed to: "+id);
+		return value;
+	}
 
 //	public ArrayList<Item> takeAllShoppingList() {
 //		ArrayList<Item> nameAndId = new ArrayList<Item>();
@@ -133,6 +154,46 @@ public class Controller {
 			delete(Controller.SHOPPING_LIST_TABLE, Controller.LIST_ID, getShoppingIdByValue(shoppingListName));
 		}
 	}
+
+	public void fillUpShoppingItems(int shoppingListId,EditText shoppingListEditText, TableLayout shoppingListTableLayout) {
+		ArrayList<ArrayList<String>> allValues = getAllNameAndQuantityValues(shoppingListId);
+		shoppingListEditText.setText(getShoppingNameById(shoppingListId));
+		Iterator<ArrayList<String>> it = allValues.iterator();
+		int i = 0;
+		while(it.hasNext())
+		{
+			ArrayList<String> currentItem = it.next();
+			ShoppingListItem tempItem = (ShoppingListItem) shoppingListTableLayout.getChildAt(i);
+			EditText tempEditText = (EditText) tempItem.getChildAt(0);
+			tempEditText.setText(currentItem.get(0));
+			TextView tempTextView = (TextView) tempItem.getChildAt(2);
+			tempTextView.setText(currentItem.get(1));
+			tempItem.setQuantity(Integer.parseInt(currentItem.get(1)));
+			i++;
+		}
+	}
+	
+	
+
+	private ArrayList<ArrayList<String>> getAllNameAndQuantityValues(int shoppingListId) {
+		ArrayList<ArrayList<String>> allValues = new ArrayList<ArrayList<String>>();
+		DBHelper dbHelper = new DBHelper();
+		Cursor tempCursor = dbHelper.openToRead().db.query(ITEMS_TABLE, new String[]{ITEM_NAME,ITEM_QUANTITY}, ITEM_SHOPPING_LIST_ID+" = "+shoppingListId, null, null, null, null);
+		tempCursor.moveToFirst();
+		while(!tempCursor.isAfterLast())
+		{
+			ArrayList<String> tempArrayList = new ArrayList<String>();
+			tempArrayList.add(tempCursor.getString(tempCursor.getColumnIndex(ITEM_NAME)));
+			tempArrayList.add(tempCursor.getString(tempCursor.getColumnIndex(ITEM_QUANTITY)));
+			allValues.add(tempArrayList);
+			tempCursor.moveToNext();
+		}
+		tempCursor.close();
+		dbHelper.close();
+		return allValues;
+	}
+
+
 
 	private class DBHelper
 	{

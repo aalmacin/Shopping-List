@@ -1,8 +1,5 @@
 package com.raidrin.shoppinglist;
 
-import java.util.ArrayList;
-import java.util.Currency;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -28,6 +25,7 @@ public class ShoppingListApp extends ListActivity {
 	public static final int MODIFY_REQUEST = 1;
 	public static final int CREATE_REQUEST = 2;
 	public static final String CREATE_MODIFY = "TheCreateModiFyRequest";
+	public static final String SHOPPING_LIST_ID = "TheShoppingListName";
 	private ImageButton addShoppingListImageButton;
 	private Intent addModifyIntent;
 	private Context context;
@@ -115,6 +113,7 @@ public class ShoppingListApp extends ListActivity {
 			return true;
 		case MODIFY_ID:
 			addModifyIntent.putExtra(CREATE_MODIFY, MODIFY_REQUEST);
+			addModifyIntent.putExtra(SHOPPING_LIST_ID, selectedItem);
 	        startActivity(addModifyIntent);
 			onPause();
 			Log.d(TAG_NAME, "Modify onContextItemSelected.");

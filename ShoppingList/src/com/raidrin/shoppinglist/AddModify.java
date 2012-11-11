@@ -16,6 +16,7 @@ public class AddModify extends Activity {
 
     private static final int MAX_ITEMS = 20;
 	private static final String TAG_NAME = "Debug";
+	private static final int TableLayout = 0;
 	private Button cancelButton;
 	private Button saveButton;
 
@@ -25,7 +26,6 @@ public class AddModify extends Activity {
 	private EditText shoppingListEditText;
 	private Controller controller;
 	private TextView modifyCreateTextView;
-	private boolean modify;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,12 +76,19 @@ public class AddModify extends Activity {
 				break;
 			case ShoppingListApp.MODIFY_REQUEST:
 				Log.d(TAG_NAME, "MODIFY the list");
+				fillUpForms();
 				modifyCreateTextView.setText(getString(R.string.modify_list));
 				break;
 		}
 	}
 	
-    private void runtimeCreateRows() {
+    private void fillUpForms() {
+		// TODO Auto-generated method stub
+		int shoppingListId = getIntent().getIntExtra(ShoppingListApp.SHOPPING_LIST_ID,-1);
+		controller.fillUpShoppingItems(shoppingListId,shoppingListEditText, shoppingListTableLayout);
+	}
+
+	private void runtimeCreateRows() {
     	for(int i=0;i<MAX_ITEMS;i++)
     	{
     		shoppingListTableLayout.addView(new ShoppingListItem(this));
