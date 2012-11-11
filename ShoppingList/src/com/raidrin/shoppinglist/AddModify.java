@@ -2,10 +2,8 @@ package com.raidrin.shoppinglist;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -24,12 +22,14 @@ public class AddModify extends Activity {
 	private Context context;
 	private TableLayout shoppingListTableLayout;
 	private EditText shoppingListEditText;
+	private Controller controller;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_modify);
         context = this;
+		controller = new Controller(context);
 
         shoppingListEditText = (EditText) findViewById(R.id.shoppingListEditText);
         shoppingListEditText.selectAll();
@@ -49,21 +49,20 @@ public class AddModify extends Activity {
         saveButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+		        controller.addShoppingList(shoppingListEditText.getText().toString());
 				for(int i=0;i<MAX_ITEMS;i++)
 				{
 					ShoppingListItem tempItem = (ShoppingListItem)shoppingListTableLayout.getChildAt(i);
 					if(tempItem.getShoppingListName() != "" && tempItem.getQuantity()>0)
 					{
 				        Log.e(TAG_NAME, "Add Item: "+tempItem.getShoppingListName()+" Quantity: "+tempItem.getQuantity());
-				        Controller controller = new Controller(context);
-				        controller.addItem(tempItem.getShoppingListName(),tempItem.getQuantity());
-				        controller.close();
+				        controller.addItem(tempItem.getShoppingListName(),tempItem.getQuantity(),controller.getShoppingIdByValue(shoppingListEditText.getText().toString()),Controller.NOT_SELECTED);
 			        }
-				}				
+				}
 				startActivity(mainIntent);
 			}
 		});
-        
+
         runtimeCreateRows();
         
     }

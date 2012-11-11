@@ -22,5 +22,6 @@
     <string name="enter_new_list_item">Enter New List Item</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_textview">Textview</string>
 
 </resources>

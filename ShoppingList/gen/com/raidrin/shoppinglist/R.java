@@ -65,6 +65,7 @@ public final class R {
         public static final int lists=0x7f070001;
         public static final int main=0x7f070002;
         public static final int shop=0x7f070003;
+        public static final int textview=0x7f070004;
     }
     public static final class string {
         public static final int add_shopping_list=0x7f050004;
@@ -88,6 +89,7 @@ public final class R {
         public static final int title_activity_lists=0x7f050008;
         public static final int title_activity_shop=0x7f050010;
         public static final int title_activity_shopping_list=0x7f050003;
+        public static final int title_activity_textview=0x7f050016;
         public static final int zero=0x7f050011;
     }
     public static final class style {
