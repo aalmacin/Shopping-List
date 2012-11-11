@@ -26,4 +26,6 @@
     <string name="shop">Shop</string>
     <string name="modify">Modify</string>
     <string name="delete">Delete</string>
+    <string name="modify_list">Edit Shopping List</string>
+    
 </resources>

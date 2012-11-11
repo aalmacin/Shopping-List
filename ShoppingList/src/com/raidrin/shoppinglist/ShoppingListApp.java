@@ -1,6 +1,7 @@
 package com.raidrin.shoppinglist;
 
 import java.util.ArrayList;
+import java.util.Currency;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,9 @@ public class ShoppingListApp extends ListActivity {
 	private static final int SHOP_ID = 0;
 	private static final int MODIFY_ID = 1;
 	private static final int DELETE_ID = 2;
+	public static final int MODIFY_REQUEST = 1;
+	public static final int CREATE_REQUEST = 2;
+	public static final String CREATE_MODIFY = "TheCreateModiFyRequest";
 	private ImageButton addShoppingListImageButton;
 	private Intent addModifyIntent;
 	private Context context;
@@ -47,7 +51,8 @@ public class ShoppingListApp extends ListActivity {
 
 	private OnClickListener addShoppingListListener = new OnClickListener() {
 		public void onClick(android.view.View v) {
-			startActivity(addModifyIntent);
+			addModifyIntent.putExtra(CREATE_MODIFY, CREATE_REQUEST);
+	        startActivity(addModifyIntent);
 			onPause();
 		};
 	};
@@ -109,6 +114,9 @@ public class ShoppingListApp extends ListActivity {
 			Log.d(TAG_NAME, "Shop onContextItemSelected.");
 			return true;
 		case MODIFY_ID:
+			addModifyIntent.putExtra(CREATE_MODIFY, MODIFY_REQUEST);
+	        startActivity(addModifyIntent);
+			onPause();
 			Log.d(TAG_NAME, "Modify onContextItemSelected.");
 			return true;
 		case DELETE_ID:

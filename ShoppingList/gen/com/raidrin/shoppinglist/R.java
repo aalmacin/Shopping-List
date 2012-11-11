@@ -85,6 +85,7 @@ public final class R {
         public static final int left_button=0x7f05000a;
         public static final int menu_settings=0x7f050002;
         public static final int modify=0x7f050018;
+        public static final int modify_list=0x7f05001a;
         public static final int quantity=0x7f050012;
         public static final int right_button=0x7f05000b;
         public static final int save=0x7f050014;
