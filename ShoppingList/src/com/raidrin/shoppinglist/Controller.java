@@ -29,7 +29,6 @@ public class Controller {
 	public static final String ITEMS_TABLE_CREATE_QUERY = "CREATE TABLE "+ITEMS_TABLE+" ("+ITEM_ID+" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"+ITEM_NAME+" VARCHAR NOT NULL, " +
 				""+ITEM_SHOPPING_LIST_ID+" INTEGER NOT NULL,FOREIGN KEY("+ITEM_SHOPPING_LIST_ID+") REFERENCES "+SHOPPING_LIST_TABLE+"("+LIST_ID+"));";
 	private static final String TAG_NAME = "Debug";
-	private ShoppingListSQLHelper shoppingListSQLHelper;
 	private SQLiteDatabase db;
 	private Context context;
 	public Controller(Context context) {
@@ -45,7 +44,8 @@ public class Controller {
 
 	public ArrayList<HashMap<String,String>> takeAllShoppingList() {
 		ArrayList<HashMap<String,String>> allNames = new ArrayList<HashMap<String,String>>();
-		Cursor tempCursor = openToRead().db.query(SHOPPING_LIST_TABLE, null, 
+		Controller controller = new Controller(context);
+		Cursor tempCursor = controller.openToRead().db.query(SHOPPING_LIST_TABLE, null, 
 				null, null, null, null, null);
 		tempCursor.moveToFirst();
 		while(!tempCursor.isAfterLast())
@@ -56,10 +56,7 @@ public class Controller {
 			tempCursor.moveToNext();
 		}
 		tempCursor.close();
-//		
-		doesTblExist(SHOPPING_LIST_TABLE);
-//		Log.e(TAG_NAME, "SHOPPING LIST QUERY : "+SHOPPING_LIST_TABLE_QUERY);
-//		Log.e(TAG_NAME, "ITEM LIST QUERY : "+ITEMS_TABLE_CREATE_QUERY);
+		controller.close();
 		return allNames;
 	}
 	
@@ -70,18 +67,17 @@ public class Controller {
 	
 	public Controller openToRead()
 	{
-        shoppingListSQLHelper = new ShoppingListSQLHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
+		ShoppingListSQLHelper shoppingListSQLHelper = new ShoppingListSQLHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
 		db = shoppingListSQLHelper.getReadableDatabase();
 		return this;
 	}
 	
 	public Controller openToWrite()
 	{
-        shoppingListSQLHelper = new ShoppingListSQLHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
+        ShoppingListSQLHelper shoppingListSQLHelper = new ShoppingListSQLHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
 		db = shoppingListSQLHelper.getWritableDatabase();
 		return this;
-	}
-	
+	}	
 	
 	 public boolean doesTblExist(String tblName){ 
 	        Cursor rs = null; 
@@ -95,7 +91,7 @@ public class Controller {
 	        }finally{ 
 	            if (rs != null) rs.close(); 
 	        } 
-	    } 
+	 } 
 
 
 
