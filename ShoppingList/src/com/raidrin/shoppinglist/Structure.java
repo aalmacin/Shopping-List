@@ -1,6 +1,8 @@
 package com.raidrin.shoppinglist;
 
 public class Structure {
+	public Structure() {
+	}
 	public static class shoppingList
 	{
 		public static int id;

@@ -2,6 +2,7 @@ package com.raidrin.shoppinglist;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.app.Activity;
@@ -18,7 +19,6 @@ public class ShoppingListApp extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        ShoppingListItem badItem = new ShoppingListItem(this);
         addShoppingListImageButton = (ImageButton)findViewById(R.id.addShoppingListImageButton);
         context = this;
         addShoppingListImageButton.setOnClickListener(addShoppingListListener);
