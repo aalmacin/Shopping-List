@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
+import android.widget.TableLayout;
 
 public class Controller {
     public static final int DATABASE_VERSION = 1;
@@ -69,30 +70,30 @@ public class Controller {
 				id = Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)));
 				tempCursor.moveToNext();
 			}
-			dbHelper.close();
 		}
-		Log.d(TAG_NAME, "The id is changed to: "+id);
+		dbHelper.close();
+//		Log.d(TAG_NAME, "The id is changed to: "+id);
 		return id;
 	}
 
-	public ArrayList<Item> takeAllShoppingList() {
-		ArrayList<Item> nameAndId = new ArrayList<Item>();
-		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, null, null, null, null, null);
-		tempCursor.moveToFirst();
-		while(!tempCursor.isAfterLast())
-		{
-			new Item(Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID))),tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
-			tempCursor.moveToNext();
-		}
-		tempCursor.close();
-		dbHelper.close();
-		return nameAndId;
-	}
+//	public ArrayList<Item> takeAllShoppingList() {
+//		ArrayList<Item> nameAndId = new ArrayList<Item>();
+//		DBHelper dbHelper = new DBHelper();
+//		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, null, null, null, null, null);
+//		tempCursor.moveToFirst();
+//		while(!tempCursor.isAfterLast())
+//		{
+//			new Item(Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID))),tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
+//			tempCursor.moveToNext();
+//		}
+//		tempCursor.close();
+//		dbHelper.close();
+//		return nameAndId;
+//	}
 
-	public boolean shoppingListIsUnique(String string) {
-		// TODO Auto-generated method stub
-		return true;
+	public boolean shoppingListIsUnique(String name) {
+		Log.d(TAG_NAME, "The shopping list is "+((getShoppingIdByValue(name)<0)?"Unique":"Not unique"));
+		return (getShoppingIdByValue(name)<0)?true:false;
 	}
 	
 	public Cursor takeShoppingListCursor() {
@@ -106,6 +107,31 @@ public class Controller {
 		Log.d(TAG_NAME, keyId + "=" + id);
         dbHelper.openToWrite().db.delete(table, keyId + "=" + id, null);
         dbHelper.close();
+	}
+
+	public void createOrAddItemsInShoppingList(String shoppingListName,	int maxItems, TableLayout shoppingListTableLayout) {
+
+		boolean uniqueTable = shoppingListIsUnique(shoppingListName);
+		
+		if(uniqueTable)
+		{
+	        addShoppingList(shoppingListName);
+		}
+		
+		int numOfCorrectRowsCounter = 0;
+		for(int i=0;i<maxItems;i++)
+		{
+			ShoppingListItem tempItem = (ShoppingListItem) shoppingListTableLayout.getChildAt(i);
+			if(tempItem.getShoppingListItemName() != "" && tempItem.getQuantity()>0)
+			{
+		        addItem(tempItem.getShoppingListItemName(),shoppingListName,tempItem.getQuantity());
+		        numOfCorrectRowsCounter++;
+	        }
+		}
+		if(numOfCorrectRowsCounter == 0 && uniqueTable )
+		{
+			delete(Controller.SHOPPING_LIST_TABLE, Controller.LIST_ID, getShoppingIdByValue(shoppingListName));
+		}
 	}
 
 	private class DBHelper

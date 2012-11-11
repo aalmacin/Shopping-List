@@ -28,7 +28,8 @@ public class ShoppingListApp extends ListActivity {
 	private Intent addModifyIntent;
 	private Context context;
 	private Controller controller;
-	private ArrayList<Item> items;
+	private int selectedItem;
+	private Cursor allShoppingListsCursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,6 @@ public class ShoppingListApp extends ListActivity {
 		context = this;
 
 		controller = new Controller(context);
-		items = new ArrayList<Item>();
 		addModifyIntent = new Intent(context, AddModify.class);
 	}
 
@@ -51,17 +51,22 @@ public class ShoppingListApp extends ListActivity {
 			onPause();
 		};
 	};
-	private int selectedItem;
 
 	protected void onResume() {
 		super.onResume();
+		allShoppingListsCursor = controller.takeShoppingListCursor();
 		SimpleCursorAdapterExtension simpleAdapter = new SimpleCursorAdapterExtension(this,
 				R.layout.shoppinglists_row,
-				controller.takeShoppingListCursor(),
+				allShoppingListsCursor ,
 				new String[] { Controller.LIST_NAME },
 				new int[] { R.id.textView1 });
-		items = controller.takeAllShoppingList();
 		setListAdapter(simpleAdapter);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		allShoppingListsCursor.close();
 	}
 
 	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter {
