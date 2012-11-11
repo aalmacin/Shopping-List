@@ -18,6 +18,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -27,20 +28,19 @@ import android.database.Cursor;
 
 public class ShoppingListApp extends ListActivity {
 
+
 	private static final String TAG_NAME = "Debug";
 	private ImageButton addShoppingListImageButton;
 	private Intent addModifyIntent;
 	private Context context;
 	private HashMap<String,String> allShoppingLists;
-	private ScrollView androidListScrollView;
-	private ListView mainAndroidListView;
 	private Controller controller;	
+	private ArrayList<Item> items;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        androidListScrollView = (ScrollView)findViewById(R.id.androidListScrollView);
         
         addShoppingListImageButton = (ImageButton)findViewById(R.id.addShoppingListImageButton);
         addShoppingListImageButton.setOnClickListener(addShoppingListListener);
@@ -48,8 +48,8 @@ public class ShoppingListApp extends ListActivity {
         context = this;
         allShoppingLists = new HashMap<String,String>();
         
-		mainAndroidListView = (ListView)androidListScrollView.getChildAt(0);
         controller = new Controller(context);
+		items = new ArrayList<Item>();
     }
 
 	private OnClickListener addShoppingListListener = new OnClickListener(){
@@ -63,33 +63,21 @@ public class ShoppingListApp extends ListActivity {
 
 	protected void onResume() {
 		super.onResume();
-//		allShoppingLists = controller.takeAllShoppingList();
-		CursorAdapter cursorAdapter = new CursorAdapter(context, controller.takeShoppingListCursor()) {
+		SimpleCursorAdapter simpAdapter = new SimpleCursorAdapterExtension(context, 0, null, null, null);
+		SimpleCursorAdapter simpleAdapter = new SimpleCursorAdapter(this, R.layout.shoppinglists_row, controller.takeShoppingListCursor(), new String[]{Controller.LIST_NAME}, new int[]{R.id.textView1});
+		items = controller.takeAllShoppingList();
+		setListAdapter(simpleAdapter);
+	}
+
+	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter 
+	{
+		private SimpleCursorAdapterExtension(Context context, int layout,Cursor c, String[] from, int[] to) {
+			super(context, layout, c, from, to);
 			
-			@Override
-			public View newView(Context context, Cursor cursor, ViewGroup parent) {
-				return new TextView(context);
-			}
-			
-			@Override
-			public void bindView(View view, Context context, Cursor cursor) {
-				view.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(Controller.LIST_ID))));
-			}
-		};
-		setListAdapter(cursorAdapter);
-//		ArrayList<String> names = new ArrayList<String>();
-//		for(int i=0;i<allShoppingLists.size();i++){
-//			int setID = (int)'t'+'e'+'m'+'p'+'T'+'e'+'x'+'t'+'V'+'i'+'e'+'w'+i;
-////				names.add(allShoppingLists.get(Controller.LIST_ID));
-//			TextView tempTextView = new TextView(context);
-//			tempTextView.setText(allShoppingLists.get(Controller.LIST_ID));
-//			tempTextView.setId(setID);
-//			mainAndroidListView.addView(tempTextView);
-////				setListAdapter(new ArrayAdapter<String>(this,setID,new String[]{allShoppingLists.get(Controller.LIST_ID)}));
-//		}
-//			((ArrayAdapter<Object>) mainAndroidListView.getAdapter()).notifyDataSetChanged();
-//			setContentView(R.layout.main);
-//			ListAdapter simpleAdapter = new SimpleAdapter(this, allShoppingLists, R.layout.main, new String[]{Controller.LIST_NAME}, new int[]{mainAndroidListView.getId()});
-//			setListAdapter();
+		}@Override
+		public void bindView(View view, Context context, Cursor cursor) {
+			// TODO Auto-generated method stub
+			super.bindView(view, context, cursor);
+		}
 	}
 }

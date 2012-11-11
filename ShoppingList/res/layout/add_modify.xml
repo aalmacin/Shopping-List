@@ -42,15 +42,16 @@
             android:text="@string/enter_new_list_item"
             android:textColor="@android:color/darker_gray"
             android:width="@dimen/itemSize" />
-
+
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/quantity"
             android:textColor="@android:color/darker_gray"
             android:width="@dimen/quantity_textView" />
+
     </LinearLayout>
 
     <ScrollView

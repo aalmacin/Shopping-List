@@ -14,6 +14,7 @@ public final class R {
         public static final int default_padding=0x7f040004;
         public static final int default_text_size=0x7f040001;
         public static final int itemSize=0x7f040003;
+        public static final int listViewHeight=0x7f040008;
         public static final int quantity_textView=0x7f040006;
         public static final int quantity_width=0x7f040000;
         public static final int scrollViewHeight=0x7f040007;
@@ -32,33 +33,33 @@ public final class R {
         public static final int addModifyLinearLayout=0x7f080000;
         public static final int addShoppingListImageButton=0x7f080010;
         public static final int addShoppingListTextView=0x7f080011;
-        public static final int androidListScrollView=0x7f080012;
         public static final int cancelButton=0x7f080009;
-        public static final int checkBox1=0x7f080016;
+        public static final int checkBox1=0x7f080015;
         public static final int createItemDecreaseImageButton=0x7f08000c;
         public static final int createItemIncreaseImageButton=0x7f08000e;
         public static final int createItemItemEditText=0x7f08000b;
         public static final int createItemLinearLayout=0x7f08000a;
         public static final int createItemQuantityTextView=0x7f08000d;
         public static final int headingLinearLayout=0x7f080003;
-        public static final int menu_settings=0x7f080017;
+        public static final int menu_settings=0x7f080016;
         public static final int modifyCreateTextView=0x7f080001;
         public static final int saveButton=0x7f080008;
         public static final int scrollView1=0x7f080006;
         public static final int shoppingListEditText=0x7f080002;
         public static final int shoppingListTableLayout=0x7f080007;
-        public static final int showItemItemTextView=0x7f080014;
-        public static final int showItemLinearLayout=0x7f080013;
-        public static final int showItemQuantityTextView=0x7f080015;
+        public static final int showItemItemTextView=0x7f080013;
+        public static final int showItemLinearLayout=0x7f080012;
+        public static final int showItemQuantityTextView=0x7f080014;
         public static final int textView1=0x7f080004;
-        public static final int textView2=0x7f080005;
+        public static final int textView3=0x7f080005;
     }
     public static final class layout {
         public static final int add_modify=0x7f030000;
         public static final int create_item=0x7f030001;
         public static final int main=0x7f030002;
         public static final int shop=0x7f030003;
-        public static final int show_item=0x7f030004;
+        public static final int shoppinglists_row=0x7f030004;
+        public static final int show_item=0x7f030005;
     }
     public static final class menu {
         public static final int add_modify=0x7f070000;

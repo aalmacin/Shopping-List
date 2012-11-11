@@ -70,15 +70,14 @@ public class Controller {
 		return id;
 	}
 
-	public HashMap<String,String> takeAllShoppingList() {
-		HashMap<String,String> nameAndId = new HashMap<String,String>();
+	public ArrayList<Item> takeAllShoppingList() {
+		ArrayList<Item> nameAndId = new ArrayList<Item>();
 		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, 
-				null, null, null, null, null);
+		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, null, null, null, null, null);
 		tempCursor.moveToFirst();
 		while(!tempCursor.isAfterLast())
 		{
-			nameAndId.put(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)),tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
+			new Item(Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID))),tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
 			tempCursor.moveToNext();
 		}
 		tempCursor.close();
@@ -88,11 +87,8 @@ public class Controller {
 	
 	public Cursor takeShoppingListCursor() {
 		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, 
+		return dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, 
 				null, null, null, null, null);
-		dbHelper.close();
-		tempCursor.close();
-		return tempCursor;
 	}
 
 	private class DBHelper
