@@ -36,10 +36,14 @@ public class Controller {
 		this.context = context;
 	}
 	
-	public void addItem(String name,int quantity,int shoppingId,int selected) {
+	public void addItem(String name,String shoppingListName,int quantity) {
+		int id = 5000;
+		id = getShoppingIdByValue(shoppingListName);
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(ITEM_NAME, name);
 		contentValues.put(ITEM_QUANTITY, quantity);
+		contentValues.put(ITEM_SHOPPING_LIST_ID, id);
+//		contentValues.put(ITEM_BOUGHT, NOT_SELECTED);
 		DBHelper dbHelper = new DBHelper();
         dbHelper.openToWrite().db.insert(ITEMS_TABLE, null, contentValues);
         dbHelper.close();
@@ -53,20 +57,21 @@ public class Controller {
 		dbHelper.close();
 	}
 
-	public int getShoppingIdByValue(String string) {
-		int id = 0;
+	public int getShoppingIdByValue(String name) {
+		int id = -1;
 		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, new String[]{LIST_ID}, LIST_NAME+"=", new String[]{string}, null, null, null);
-		while(!tempCursor.isAfterLast())
+		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, new String[]{LIST_ID}, LIST_NAME+"='"+name+"'", null, null, null, null);
+		if(tempCursor.moveToFirst())
 		{
-			id = (tempCursor.getString(tempCursor.getColumnIndex(LIST_ID))==null)?-6:Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)));
-			if(id == -6)
+			while(!tempCursor.isAfterLast())
 			{
-				Log.e(TAG_NAME, "Its a null");
+//				Log.d(TAG_NAME, "List id: "+Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)))+" List name: "+tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
+				id = Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)));
+				tempCursor.moveToNext();
 			}
-			tempCursor.moveToNext();
+			dbHelper.close();
 		}
-		dbHelper.close();
+		Log.d(TAG_NAME, "The id is changed to: "+id);
 		return id;
 	}
 
@@ -83,6 +88,11 @@ public class Controller {
 		tempCursor.close();
 		dbHelper.close();
 		return nameAndId;
+	}
+
+	public boolean shoppingListIsUnique(String string) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 	public Cursor takeShoppingListCursor() {

@@ -49,14 +49,18 @@ public class AddModify extends Activity {
         saveButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+//				if(controller.shoppingListIsUnique(shoppingListEditText.getText().toString()))
+//				{
+//			        controller.addShoppingList(shoppingListEditText.getText().toString());
+//				}
 		        controller.addShoppingList(shoppingListEditText.getText().toString());
 				for(int i=0;i<MAX_ITEMS;i++)
 				{
 					ShoppingListItem tempItem = (ShoppingListItem)shoppingListTableLayout.getChildAt(i);
-					if(tempItem.getShoppingListName() != "" && tempItem.getQuantity()>0)
+					if(tempItem.getShoppingListItemName() != "" && tempItem.getQuantity()>0)
 					{
-				        Log.e(TAG_NAME, "Add Item: "+tempItem.getShoppingListName()+" Quantity: "+tempItem.getQuantity());
-				        controller.addItem(tempItem.getShoppingListName(),tempItem.getQuantity(),controller.getShoppingIdByValue(shoppingListEditText.getText().toString()),Controller.NOT_SELECTED);
+//				        Log.e(TAG_NAME, "Add Item: "+tempItem.getShoppingListItemName()+" Quantity: "+tempItem.getQuantity());
+				        controller.addItem(tempItem.getShoppingListItemName(),shoppingListEditText.getText().toString(),tempItem.getQuantity());
 			        }
 				}
 				startActivity(mainIntent);

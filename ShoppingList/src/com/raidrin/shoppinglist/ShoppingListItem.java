@@ -62,7 +62,7 @@ public class ShoppingListItem extends TableRow {
     	this.addView(quantityTextView);
     	this.addView(increaseImageButton);
 	}
-	public String getShoppingListName() {
+	public String getShoppingListItemName() {
 		return shoppingListName;
 	}
 	public void setShoppingListName(String shoppingList) {

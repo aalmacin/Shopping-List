@@ -1,7 +1,6 @@
 package com.raidrin.shoppinglist;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +21,6 @@ import android.database.Cursor;
 public class ShoppingListApp extends ListActivity {
 
 	private static final String TAG_NAME = "Debug";
-	private static final int ACTIVITY_EDIT = 1;
 	private static final int SHOP_ID = 0;
 	private static final int MODIFY_ID = 1;
 	private static final int DELETE_ID = 2;
@@ -112,7 +109,7 @@ public class ShoppingListApp extends ListActivity {
 		case DELETE_ID:
 			controller.delete(Controller.SHOPPING_LIST_TABLE,
 					Controller.LIST_ID, selectedItem);
-			Log.d(TAG_NAME, "Delete onContextItemSelected.");
+			onResume();
 			return true;
 		}
 		return super.onContextItemSelected(item);
