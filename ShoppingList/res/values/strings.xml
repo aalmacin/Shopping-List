@@ -23,5 +23,7 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_textview">Textview</string>
-
+    <string name="shop">Shop</string>
+    <string name="modify">Modify</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -1,26 +1,20 @@
 package com.raidrin.shoppinglist;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.app.Activity;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,56 +22,100 @@ import android.database.Cursor;
 
 public class ShoppingListApp extends ListActivity {
 
-
 	private static final String TAG_NAME = "Debug";
+	private static final int ACTIVITY_EDIT = 1;
+	private static final int SHOP_ID = 0;
+	private static final int MODIFY_ID = 1;
+	private static final int DELETE_ID = 2;
 	private ImageButton addShoppingListImageButton;
 	private Intent addModifyIntent;
 	private Context context;
-	private HashMap<String,String> allShoppingLists;
-	private Controller controller;	
+	private Controller controller;
 	private ArrayList<Item> items;
-	
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        
-        addShoppingListImageButton = (ImageButton)findViewById(R.id.addShoppingListImageButton);
-        addShoppingListImageButton.setOnClickListener(addShoppingListListener);
-        
-        context = this;
-        allShoppingLists = new HashMap<String,String>();
-        
-        controller = new Controller(context);
-		items = new ArrayList<Item>();
-    }
 
-	private OnClickListener addShoppingListListener = new OnClickListener(){
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+
+		addShoppingListImageButton = (ImageButton) findViewById(R.id.addShoppingListImageButton);
+		addShoppingListImageButton.setOnClickListener(addShoppingListListener);
+
+		context = this;
+
+		controller = new Controller(context);
+		items = new ArrayList<Item>();
+		addModifyIntent = new Intent(context, AddModify.class);
+	}
+
+	private OnClickListener addShoppingListListener = new OnClickListener() {
 		public void onClick(android.view.View v) {
-	        addModifyIntent = new Intent(context,AddModify.class);
 			startActivity(addModifyIntent);
 			onPause();
 		};
 	};
-
+	private int selectedItem;
 
 	protected void onResume() {
 		super.onResume();
-		SimpleCursorAdapter simpAdapter = new SimpleCursorAdapterExtension(context, 0, null, null, null);
-		SimpleCursorAdapter simpleAdapter = new SimpleCursorAdapter(this, R.layout.shoppinglists_row, controller.takeShoppingListCursor(), new String[]{Controller.LIST_NAME}, new int[]{R.id.textView1});
+		SimpleCursorAdapterExtension simpleAdapter = new SimpleCursorAdapterExtension(this,
+				R.layout.shoppinglists_row,
+				controller.takeShoppingListCursor(),
+				new String[] { Controller.LIST_NAME },
+				new int[] { R.id.textView1 });
 		items = controller.takeAllShoppingList();
 		setListAdapter(simpleAdapter);
 	}
 
-	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter 
-	{
-		private SimpleCursorAdapterExtension(Context context, int layout,Cursor c, String[] from, int[] to) {
+	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter {
+
+		public SimpleCursorAdapterExtension(Context context, int layout,
+				Cursor c, String[] from, int[] to) {
 			super(context, layout, c, from, to);
-			
-		}@Override
+		}
+
+		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			// TODO Auto-generated method stub
 			super.bindView(view, context, cursor);
+			view.setTag(cursor.getString(cursor.getColumnIndex(Controller.LIST_ID)));
 		}
 	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		Log.d(TAG_NAME, "databaseID: "+v.getTag());	
+		selectedItem = Integer.parseInt(v.getTag().toString());
+		registerForContextMenu(v);
+		openContextMenu(v);
+		unregisterForContextMenu(v);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.add(Menu.NONE, SHOP_ID, Menu.NONE, R.string.shop);
+		menu.add(Menu.NONE, MODIFY_ID, Menu.NONE, R.string.modify);
+		menu.add(Menu.NONE, DELETE_ID, Menu.NONE, R.string.delete);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case SHOP_ID:
+			Log.d(TAG_NAME, "Shop onContextItemSelected.");
+			return true;
+		case MODIFY_ID:
+			Log.d(TAG_NAME, "Modify onContextItemSelected.");
+			return true;
+		case DELETE_ID:
+			controller.delete(Controller.SHOPPING_LIST_TABLE,
+					Controller.LIST_ID, selectedItem);
+			Log.d(TAG_NAME, "Delete onContextItemSelected.");
+			return true;
+		}
+		return super.onContextItemSelected(item);
+	}
+
 }

@@ -75,6 +75,7 @@ public final class R {
         public static final int create_new_list=0x7f050007;
         public static final int def=0x7f050009;
         public static final int default_shopping_list_name=0x7f05000f;
+        public static final int delete=0x7f050019;
         public static final int empty_string=0x7f05000d;
         public static final int enter_new_list_item=0x7f050013;
         public static final int enter_shopping_list_name=0x7f05000e;
@@ -83,9 +84,11 @@ public final class R {
         public static final int itemHint=0x7f05000c;
         public static final int left_button=0x7f05000a;
         public static final int menu_settings=0x7f050002;
+        public static final int modify=0x7f050018;
         public static final int quantity=0x7f050012;
         public static final int right_button=0x7f05000b;
         public static final int save=0x7f050014;
+        public static final int shop=0x7f050017;
         public static final int title_activity_add_modify=0x7f050006;
         public static final int title_activity_lists=0x7f050008;
         public static final int title_activity_shop=0x7f050010;

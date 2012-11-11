@@ -91,6 +91,13 @@ public class Controller {
 				null, null, null, null, null);
 	}
 
+	public void delete(String table,String keyId, int id) {
+		DBHelper dbHelper = new DBHelper();
+		Log.d(TAG_NAME, keyId + "=" + id);
+        dbHelper.openToWrite().db.delete(table, keyId + "=" + id, null);
+        dbHelper.close();
+	}
+
 	private class DBHelper
 	{
 		private SQLiteDatabase db;
