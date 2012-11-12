@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -22,7 +21,6 @@ public class AddModify extends Activity {
 	private Button cancelButton;
 	private Button saveButton;
 
-	private Intent mainIntent;
 	private Context context;
 	private TableLayout shoppingListTableLayout;
 	private EditText shoppingListEditText;
@@ -46,8 +44,6 @@ public class AddModify extends Activity {
 		shoppingListEditText = (EditText) findViewById(R.id.shoppingListEditText);
 		shoppingListEditText.selectAll();
 		shoppingListTableLayout = (TableLayout) findViewById(R.id.shoppingListTableLayout);
-
-		mainIntent = new Intent(context, ShoppingListApp.class);
 
 		cancelButton = (Button) findViewById(R.id.cancelButton);
 		cancelButton.setOnClickListener(new OnClickListener() {
@@ -141,11 +137,9 @@ public class AddModify extends Activity {
 		case ShoppingListApp.CREATE_REQUEST:
 			modifyCreateTextView.setText(getString(R.string.create_new_list));
 			createMode = true;
-//			Log.d(TAG_NAME, "CREATE the list");
 			break;
 		case ShoppingListApp.MODIFY_REQUEST:
 			createMode = false;
-//			Log.d(TAG_NAME, "MODIFY the list");
 			fillUpForms();
 			modifyCreateTextView.setText(getString(R.string.modify_list));
 			break;

@@ -212,7 +212,7 @@ public class Controller {
 		dbHelper.close();
 	}
 
-	private ArrayList<ArrayList<String>> getAllNameAndQuantityValues(int shoppingListId) {
+	public ArrayList<ArrayList<String>> getAllNameAndQuantityValues(int shoppingListId) {
 		ArrayList<ArrayList<String>> allValues = new ArrayList<ArrayList<String>>();
 		DBHelper dbHelper = new DBHelper();
 		Cursor tempCursor = dbHelper.openToRead().db.query(ITEMS_TABLE, new String[]{ITEM_NAME,ITEM_QUANTITY}, ITEM_SHOPPING_LIST_ID+" = "+shoppingListId, null, null, null, null);
@@ -228,6 +228,10 @@ public class Controller {
 		tempCursor.close();
 		dbHelper.close();
 		return allValues;
+	}
+	public Cursor getAllNameAndQuantityCursor(int shoppingListId) {
+		DBHelper dbHelper = new DBHelper();
+		return dbHelper.openToRead().db.query(ITEMS_TABLE, new String[]{ITEM_ID,ITEM_NAME,ITEM_QUANTITY}, ITEM_SHOPPING_LIST_ID+" = "+shoppingListId, null, null, null, null);
 	}
 
 

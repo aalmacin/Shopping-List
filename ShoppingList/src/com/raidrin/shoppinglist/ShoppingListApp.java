@@ -91,20 +91,6 @@ public class ShoppingListApp extends ListActivity {
 		allShoppingListsCursor.close();
 	}
 
-	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter {
-
-		public SimpleCursorAdapterExtension(Context context, int layout,
-				Cursor c, String[] from, int[] to) {
-			super(context, layout, c, from, to);
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			super.bindView(view, context, cursor);
-			view.setTag(cursor.getString(cursor.getColumnIndex(Controller.LIST_ID)));
-		}
-	}
-
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
@@ -191,6 +177,20 @@ public class ShoppingListApp extends ListActivity {
 			return true;
 		}
 		return super.onContextItemSelected(item);
+	}
+
+	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter {
+
+		public SimpleCursorAdapterExtension(Context context, int layout,
+				Cursor c, String[] from, int[] to) {
+			super(context, layout, c, from, to);
+		}
+
+		@Override
+		public void bindView(View view, Context context, Cursor cursor) {
+			super.bindView(view, context, cursor);
+			view.setTag(cursor.getString(cursor.getColumnIndex(Controller.LIST_ID)));
+		}
 	}
 
 }

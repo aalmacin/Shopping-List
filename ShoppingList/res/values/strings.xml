@@ -32,5 +32,6 @@
     <string name="fix">Fix</string>
     <string name="delete_verify">Are you sure you want to delete</string>
     <string name="done">Done</string>
+    <string name="list_item">List Item</string>
     
 </resources>
