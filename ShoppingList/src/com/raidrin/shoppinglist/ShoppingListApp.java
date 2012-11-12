@@ -83,7 +83,9 @@ public class ShoppingListApp extends ListActivity {
 	}
 	
 	@Override
-	public void onBackPressed() {}
+	public void onBackPressed() {
+		finish();
+	}
 	
 	@Override
 	protected void onPause() {
