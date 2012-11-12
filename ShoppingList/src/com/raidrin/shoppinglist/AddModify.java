@@ -53,7 +53,6 @@ public class AddModify extends Activity {
 		cancelButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				startActivity(mainIntent);
 				finish();
 			}
 		});
@@ -69,12 +68,13 @@ public class AddModify extends Activity {
 					controller.deleteAllShoppingListItemsByShoppingId(controller.getShoppingIdByValue(shoppingListName));
 				}
 				boolean itemsAddedSuccesfully = false;
-				if(!shoppingListEditText.getText().toString().equals("")){
+				
+				if(!shoppingListEditText.getText().toString().equals(""))
 					itemsAddedSuccesfully = controller.createOrAddItemsInShoppingList(shoppingListName,	MAX_ITEMS, shoppingListTableLayout,createMode);
-				}
-				if (itemsAddedSuccesfully) {
-					startActivity(mainIntent);
-				} else {
+				
+				if (itemsAddedSuccesfully)
+					finish();
+				 else 
 					showAlertDialog(getString(R.string.shopping_list_error), getString(R.string.you_need_at_least), getString(R.string.fix),
 							new AlertDialog.OnClickListener()
 							{						
@@ -82,7 +82,6 @@ public class AddModify extends Activity {
 								public void onClick(DialogInterface dialog, int which) {
 								}
 							});
-				}
 			} 
 		});
 		runtimeCreateRows();

@@ -31,6 +31,7 @@ public class ShoppingListApp extends ListActivity {
 	public static final String SHOPPING_LIST_ID = "TheShoppingListName";
 	private ImageButton addShoppingListImageButton;
 	private Intent addModifyIntent;
+	private Intent shopIntent;
 	private Context context;
 	private Controller controller;
 	private int selectedItem;
@@ -51,6 +52,7 @@ public class ShoppingListApp extends ListActivity {
 
 		controller = new Controller(context);
 		addModifyIntent = new Intent(context, AddModify.class);
+		shopIntent = new Intent(this,Shop.class);
 	}
 
 	private OnClickListener addShoppingListListener = new OnClickListener() {
@@ -163,6 +165,8 @@ public class ShoppingListApp extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case SHOP_ID:
+			shopIntent.putExtra(SHOPPING_LIST_ID, selectedItem);
+			startActivity(shopIntent);
 			allShoppingListsCursor.close();
 			return true;
 		case MODIFY_ID:
@@ -180,6 +184,7 @@ public class ShoppingListApp extends ListActivity {
 							controller.deleteTable(Controller.SHOPPING_LIST_TABLE,
 									Controller.LIST_ID, selectedItem);
 							listViewAdapter.notifyDataSetChanged();
+							allShoppingListsCursor.close();
 							onResume();
 						}
 					});
