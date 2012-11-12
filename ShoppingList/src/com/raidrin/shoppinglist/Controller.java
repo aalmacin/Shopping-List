@@ -1,9 +1,7 @@
 package com.raidrin.shoppinglist;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -42,13 +40,11 @@ public class Controller {
 	}
 	
 	public void addItem(String name,String shoppingListName,int quantity) {
-		int id = 5000;
-		id = getShoppingIdByValue(shoppingListName);
+		int id = getShoppingIdByValue(shoppingListName);
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(ITEM_NAME, name);
 		contentValues.put(ITEM_QUANTITY, quantity);
 		contentValues.put(ITEM_SHOPPING_LIST_ID, id);
-//		contentValues.put(ITEM_BOUGHT, NOT_SELECTED);
 		DBHelper dbHelper = new DBHelper();
         dbHelper.openToWrite().db.insert(ITEMS_TABLE, null, contentValues);
         dbHelper.close();
@@ -70,13 +66,11 @@ public class Controller {
 		{
 			while(!tempCursor.isAfterLast())
 			{
-//				Log.d(TAG_NAME, "List id: "+Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)))+" List name: "+tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
 				id = Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID)));
 				tempCursor.moveToNext();
 			}
 		}
 		dbHelper.close();
-//		Log.d(TAG_NAME, "The id is changed to: "+id);
 		return id;
 	}
 	
@@ -93,27 +87,10 @@ public class Controller {
 			}
 		}
 		dbHelper.close();
-//		Log.d(TAG_NAME, "The id is changed to: "+id);
 		return value;
 	}
 
-//	public ArrayList<Item> takeAllShoppingList() {
-//		ArrayList<Item> nameAndId = new ArrayList<Item>();
-//		DBHelper dbHelper = new DBHelper();
-//		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, null, null, null, null, null);
-//		tempCursor.moveToFirst();
-//		while(!tempCursor.isAfterLast())
-//		{
-//			new Item(Integer.parseInt(tempCursor.getString(tempCursor.getColumnIndex(LIST_ID))),tempCursor.getString(tempCursor.getColumnIndex(LIST_NAME)));
-//			tempCursor.moveToNext();
-//		}
-//		tempCursor.close();
-//		dbHelper.close();
-//		return nameAndId;
-//	}
-
 	public boolean shoppingListIsUnique(String name) {
-		Log.d(TAG_NAME, "The shopping list is "+((getShoppingIdByValue(name)<0)?"Unique":"Not unique"));
 		return (getShoppingIdByValue(name)<0)?true:false;
 	}
 	
@@ -123,36 +100,89 @@ public class Controller {
 				null, null, null, null, null);
 	}
 
-	public void delete(String table,String keyId, int id) {
+	public void deleteTable(String table,String keyId, int id) {
 		DBHelper dbHelper = new DBHelper();
-		Log.d(TAG_NAME, keyId + "=" + id);
+		dbHelper.openToWrite().db.delete(ITEMS_TABLE, "shoppinglistid = "+id, null);
         dbHelper.openToWrite().db.delete(table, keyId + "=" + id, null);
         dbHelper.close();
+        showAllItems();
 	}
 
-	public void createOrAddItemsInShoppingList(String shoppingListName,	int maxItems, TableLayout shoppingListTableLayout) {
+	public boolean createOrAddItemsInShoppingList(String shoppingListName,	int maxItems, TableLayout shoppingListTableLayout,boolean create) {
 
 		boolean uniqueTable = shoppingListIsUnique(shoppingListName);
-		
-		if(uniqueTable)
-		{
-	        addShoppingList(shoppingListName);
-		}
-		
+		ArrayList<ArrayList<String>> allValues = new ArrayList<ArrayList<String>>();
 		int numOfCorrectRowsCounter = 0;
 		for(int i=0;i<maxItems;i++)
 		{
 			ShoppingListItem tempItem = (ShoppingListItem) shoppingListTableLayout.getChildAt(i);
 			if(tempItem.getShoppingListItemName() != "" && tempItem.getQuantity()>0)
 			{
-		        addItem(tempItem.getShoppingListItemName(),shoppingListName,tempItem.getQuantity());
+				ArrayList<String> tempArrayList = new ArrayList<String>();
+		        tempArrayList.add(tempItem.getShoppingListItemName());
+		        tempArrayList.add(shoppingListName);
+		        tempArrayList.add(Integer.toString(tempItem.getQuantity()));
+				allValues.add(tempArrayList);
 		        numOfCorrectRowsCounter++;
 	        }
 		}
-		if(numOfCorrectRowsCounter == 0 && uniqueTable )
+		
+		if(numOfCorrectRowsCounter > 0)
 		{
-			delete(Controller.SHOPPING_LIST_TABLE, Controller.LIST_ID, getShoppingIdByValue(shoppingListName));
+			if(create)
+			{
+				Log.d(TAG_NAME, "Create is positive.");
+				if(uniqueTable)
+				{
+					Log.d(TAG_NAME, "A unique table.");
+			        addShoppingList(shoppingListName);
+				}	
+			}
+			Iterator<ArrayList<String>> it = allValues.iterator();
+			while(it.hasNext()){
+				Log.d(TAG_NAME, "Saving");
+				ArrayList<String> tempItem = it.next();
+				addItem(tempItem.get(0), tempItem.get(1), Integer.parseInt(tempItem.get(2)));
+			}
+	        showAllItems();
+	        return true;
 		}
+		return false;
+	}
+
+	
+	
+	private void showAllItems() {
+		DBHelper dbHelper = new DBHelper();
+		Cursor curs = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, null, null, null, null, null);
+		System.out.println("----------------- SHOPPING LISTS -----------------");
+		curs.moveToFirst();
+		while (!curs.isAfterLast()) {
+			System.out.println("List id : "+curs.getString(curs.getColumnIndex(LIST_ID)));
+			System.out.println("List name : "+curs.getString(curs.getColumnIndex(LIST_NAME)));
+			curs.moveToNext();
+		}
+		curs.close();
+		Cursor curs2 = dbHelper.openToRead().db.query(ITEMS_TABLE, null, null, null, null, null, null);
+		System.out.println("----------------- SHOPPING LISTS -----------------");
+		curs2.moveToFirst();
+		while (!curs2.isAfterLast()) {
+			System.out.println("Item id : "+curs2.getString(curs2.getColumnIndex(ITEM_ID)));
+			System.out.println("Item name : "+curs2.getString(curs2.getColumnIndex(ITEM_NAME)));
+			System.out.println("Item quantity : "+curs2.getString(curs2.getColumnIndex(ITEM_QUANTITY)));
+			System.out.println("Item shopping list id : "+curs2.getString(curs2.getColumnIndex(ITEM_SHOPPING_LIST_ID)));
+			curs2.moveToNext();
+		}
+		curs2.close();
+		dbHelper.close();
+	}
+
+	public void updateTableName(int shoppingId, String newName) {
+		DBHelper dbHelper = new DBHelper();
+		ContentValues cv = new ContentValues();
+		cv.put(LIST_NAME, newName);
+		dbHelper.openToWrite().db.update(SHOPPING_LIST_TABLE, cv, LIST_ID +"="+ shoppingId, null);
+		dbHelper.close();
 	}
 
 	public void fillUpShoppingItems(int shoppingListId,EditText shoppingListEditText, TableLayout shoppingListTableLayout) {
@@ -160,8 +190,10 @@ public class Controller {
 		shoppingListEditText.setText(getShoppingNameById(shoppingListId));
 		Iterator<ArrayList<String>> it = allValues.iterator();
 		int i = 0;
+		Log.d(TAG_NAME, "fill up called");
 		while(it.hasNext())
 		{
+			Log.d(TAG_NAME, "fill up has items");
 			ArrayList<String> currentItem = it.next();
 			ShoppingListItem tempItem = (ShoppingListItem) shoppingListTableLayout.getChildAt(i);
 			EditText tempEditText = (EditText) tempItem.getChildAt(0);
@@ -172,8 +204,13 @@ public class Controller {
 			i++;
 		}
 	}
-	
-	
+
+	public void deleteAllShoppingListItemsByShoppingId(int shoppingListId) {
+		Log.d(TAG_NAME, "Deleting");
+		DBHelper dbHelper = new DBHelper();
+		dbHelper.openToWrite().db.delete(ITEMS_TABLE, "shoppinglistid = "+shoppingListId, null);
+		dbHelper.close();
+	}
 
 	private ArrayList<ArrayList<String>> getAllNameAndQuantityValues(int shoppingListId) {
 		ArrayList<ArrayList<String>> allValues = new ArrayList<ArrayList<String>>();
@@ -199,7 +236,6 @@ public class Controller {
 	{
 		private SQLiteDatabase db;
 		public DBHelper() {
-			
 		}
 		
 		public void close()

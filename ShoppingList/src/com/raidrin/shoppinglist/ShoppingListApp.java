@@ -67,6 +67,10 @@ public class ShoppingListApp extends ListActivity {
 	}
 	
 	@Override
+	public void onBackPressed() {
+	}
+	
+	@Override
 	protected void onPause() {
 		super.onPause();
 		allShoppingListsCursor.close();
@@ -89,7 +93,6 @@ public class ShoppingListApp extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		Log.d(TAG_NAME, "databaseID: "+v.getTag());	
 		selectedItem = Integer.parseInt(v.getTag().toString());
 		registerForContextMenu(v);
 		openContextMenu(v);
@@ -109,17 +112,17 @@ public class ShoppingListApp extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case SHOP_ID:
-			Log.d(TAG_NAME, "Shop onContextItemSelected.");
+			allShoppingListsCursor.close();
 			return true;
 		case MODIFY_ID:
 			addModifyIntent.putExtra(CREATE_MODIFY, MODIFY_REQUEST);
 			addModifyIntent.putExtra(SHOPPING_LIST_ID, selectedItem);
 	        startActivity(addModifyIntent);
 			onPause();
-			Log.d(TAG_NAME, "Modify onContextItemSelected.");
+			allShoppingListsCursor.close();
 			return true;
 		case DELETE_ID:
-			controller.delete(Controller.SHOPPING_LIST_TABLE,
+			controller.deleteTable(Controller.SHOPPING_LIST_TABLE,
 					Controller.LIST_ID, selectedItem);
 			onResume();
 			return true;

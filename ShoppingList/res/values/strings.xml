@@ -27,5 +27,8 @@
     <string name="modify">Modify</string>
     <string name="delete">Delete</string>
     <string name="modify_list">Edit Shopping List</string>
+    <string name="you_need_at_least">You need to have at least one valid list Item and a shopping list name</string>
+    <string name="shopping_list_error">Shopping List Error!</string>
+    <string name="fix">Fix</string>
     
 </resources>
