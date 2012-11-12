@@ -18,6 +18,7 @@ public final class R {
         public static final int quantity_textView=0x7f040006;
         public static final int quantity_width=0x7f040000;
         public static final int scrollViewHeight=0x7f040007;
+        public static final int shoppingListViewHeight=0x7f040009;
         public static final int showItemHeight=0x7f040002;
         public static final int specialPadding=0x7f040005;
     }
@@ -33,23 +34,27 @@ public final class R {
         public static final int addModifyLinearLayout=0x7f080000;
         public static final int addShoppingListImageButton=0x7f080010;
         public static final int addShoppingListTextView=0x7f080011;
+        public static final int button1=0x7f080015;
         public static final int cancelButton=0x7f080009;
-        public static final int checkBox1=0x7f080015;
+        public static final int checkBox1=0x7f080019;
         public static final int createItemDecreaseImageButton=0x7f08000c;
         public static final int createItemIncreaseImageButton=0x7f08000e;
         public static final int createItemItemEditText=0x7f08000b;
         public static final int createItemLinearLayout=0x7f08000a;
         public static final int createItemQuantityTextView=0x7f08000d;
         public static final int headingLinearLayout=0x7f080003;
-        public static final int menu_settings=0x7f080016;
+        public static final int listView1=0x7f080014;
+        public static final int menu_settings=0x7f08001a;
         public static final int modifyCreateTextView=0x7f080001;
         public static final int saveButton=0x7f080008;
         public static final int scrollView1=0x7f080006;
         public static final int shoppingListEditText=0x7f080002;
+        public static final int shoppingListNameTextView=0x7f080013;
         public static final int shoppingListTableLayout=0x7f080007;
-        public static final int showItemItemTextView=0x7f080013;
-        public static final int showItemLinearLayout=0x7f080012;
-        public static final int showItemQuantityTextView=0x7f080014;
+        public static final int shoppingListTextView=0x7f080012;
+        public static final int showItemItemTextView=0x7f080017;
+        public static final int showItemLinearLayout=0x7f080016;
+        public static final int showItemQuantityTextView=0x7f080018;
         public static final int textView1=0x7f080004;
         public static final int textView3=0x7f080005;
     }
@@ -76,6 +81,8 @@ public final class R {
         public static final int def=0x7f050009;
         public static final int default_shopping_list_name=0x7f05000f;
         public static final int delete=0x7f050019;
+        public static final int delete_verify=0x7f05001e;
+        public static final int done=0x7f05001f;
         public static final int empty_string=0x7f05000d;
         public static final int enter_new_list_item=0x7f050013;
         public static final int enter_shopping_list_name=0x7f05000e;

@@ -232,6 +232,22 @@ public class Controller {
 
 
 
+	public boolean checkIfAListExists() {
+		boolean notEmpty = false;
+		DBHelper dbHelper = new DBHelper();
+		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null, null, null, null, null, null);
+		if(tempCursor.moveToFirst())
+		{
+			Log.d(TAG_NAME, "not empty");
+			notEmpty = true;
+		}
+		tempCursor.close();
+		dbHelper.close();
+		return notEmpty;		
+	}
+
+
+
 	private class DBHelper
 	{
 		private SQLiteDatabase db;

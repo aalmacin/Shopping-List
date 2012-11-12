@@ -11,8 +11,11 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 
@@ -32,6 +35,8 @@ public class ShoppingListApp extends ListActivity {
 	private Controller controller;
 	private int selectedItem;
 	private Cursor allShoppingListsCursor;
+	private TextView addShoppingListTextView;
+	private SimpleCursorAdapterExtension listViewAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class ShoppingListApp extends ListActivity {
 
 		addShoppingListImageButton = (ImageButton) findViewById(R.id.addShoppingListImageButton);
 		addShoppingListImageButton.setOnClickListener(addShoppingListListener);
+		addShoppingListTextView = (TextView)findViewById(R.id.addShoppingListTextView);
 
 		context = this;
 
@@ -57,18 +63,25 @@ public class ShoppingListApp extends ListActivity {
 
 	protected void onResume() {
 		super.onResume();
+		if(controller.checkIfAListExists())
+		{
+			addShoppingListTextView.setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			addShoppingListTextView.setVisibility(View.INVISIBLE);
+		}
 		allShoppingListsCursor = controller.takeShoppingListCursor();
-		SimpleCursorAdapterExtension simpleAdapter = new SimpleCursorAdapterExtension(this,
+		listViewAdapter = new SimpleCursorAdapterExtension(this,
 				R.layout.shoppinglists_row,
 				allShoppingListsCursor ,
 				new String[] { Controller.LIST_NAME },
 				new int[] { R.id.textView1 });
-		setListAdapter(simpleAdapter);
+		setListAdapter(listViewAdapter);
 	}
 	
 	@Override
-	public void onBackPressed() {
-	}
+	public void onBackPressed() {}
 	
 	@Override
 	protected void onPause() {
@@ -108,6 +121,44 @@ public class ShoppingListApp extends ListActivity {
 		menu.add(Menu.NONE, DELETE_ID, Menu.NONE, R.string.delete);
 	}
 
+
+	/**
+	 * The AlertDialog that will be shown on the screen is created and shown.
+	 * 
+	 * @param title
+	 *            The title of the AlertDialog box
+	 * @param message
+	 *            The message in the AlertDialog box
+	 * @param buttonText
+	 *            The text inside the OK button
+	 * @param buttonOkListener
+	 *            the listener for the OK button
+	 */
+	private void showAlertDialog(String title, String message,
+			String buttonText, AlertDialog.OnClickListener buttonOkListener) {
+		// Get the AlertDialog Builder class and save it in a variable.
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		// Set the title, message, OK button, and the cancel listener of the
+		// AlertDialog
+		alertDialogBuilder.setTitle(title);
+		alertDialogBuilder.setMessage(message);
+
+		// Positive button is using the buttonOKListener which is passed as a
+		// parameter
+		// as its event listener.
+		alertDialogBuilder.setPositiveButton(buttonText, buttonOkListener);
+		String cancelButtonText = getString(R.string.cancel);
+		alertDialogBuilder.setNegativeButton(cancelButtonText , new AlertDialog.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+			
+		});
+		// Create the AlertDialog and show it on the screen
+		alertDialogBuilder.create().show();
+	} // End of showAlertDialog
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -118,13 +169,20 @@ public class ShoppingListApp extends ListActivity {
 			addModifyIntent.putExtra(CREATE_MODIFY, MODIFY_REQUEST);
 			addModifyIntent.putExtra(SHOPPING_LIST_ID, selectedItem);
 	        startActivity(addModifyIntent);
-			onPause();
 			allShoppingListsCursor.close();
 			return true;
 		case DELETE_ID:
-			controller.deleteTable(Controller.SHOPPING_LIST_TABLE,
-					Controller.LIST_ID, selectedItem);
-			onResume();
+			showAlertDialog(getString(R.string.delete), getString(R.string.delete_verify)+" "+controller.getShoppingNameById(selectedItem)+"?", getString(R.string.delete),
+					new AlertDialog.OnClickListener()
+					{						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							controller.deleteTable(Controller.SHOPPING_LIST_TABLE,
+									Controller.LIST_ID, selectedItem);
+							listViewAdapter.notifyDataSetChanged();
+							onResume();
+						}
+					});
 			return true;
 		}
 		return super.onContextItemSelected(item);

@@ -9,4 +9,5 @@
     <dimen name="quantity_textView">100dp</dimen>
     <dimen name="scrollViewHeight">300dp</dimen>
     <dimen name="listViewHeight">402dp</dimen>
+    <dimen name="shoppingListViewHeight">190dp</dimen>
 </resources>

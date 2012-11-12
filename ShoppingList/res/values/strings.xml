@@ -30,5 +30,7 @@
     <string name="you_need_at_least">You need to have at least one valid list Item and a shopping list name</string>
     <string name="shopping_list_error">Shopping List Error!</string>
     <string name="fix">Fix</string>
+    <string name="delete_verify">Are you sure you want to delete</string>
+    <string name="done">Done</string>
     
 </resources>

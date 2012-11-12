@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/gray_button_desc"
             android:src="@drawable/gray_plus_sign" />
-
+
         <TextView
             android:id="@+id/addShoppingListTextView"
             android:layout_width="wrap_content"
@@ -26,6 +26,7 @@
             android:text="@string/add_shopping_list"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/darker_gray" />
+
     </LinearLayout>
 
     <ListView
