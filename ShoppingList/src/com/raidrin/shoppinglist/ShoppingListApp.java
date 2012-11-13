@@ -164,13 +164,12 @@ public class ShoppingListApp extends ListActivity {
 			allShoppingListsCursor.close();
 			return true;
 		case DELETE_ID:
-			showAlertDialog(getString(R.string.delete), getString(R.string.delete_verify)+" "+controller.getShoppingNameById(selectedItem)+"?", getString(R.string.delete),
+			showAlertDialog(getString(R.string.delete), getString(R.string.delete_verify)+" "+controller.getShoppingListNameById(selectedItem)+"?", getString(R.string.delete),
 					new AlertDialog.OnClickListener()
 					{						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							controller.deleteAllShoppingListItemsByShoppingListId(Controller.SHOPPING_LIST_TABLE,
-									Controller.SHOPPING_LIST_ID, selectedItem);
+							controller.deleteAllShoppingListItemsByShoppingListId(selectedItem);
 							listViewAdapter.notifyDataSetChanged();
 							allShoppingListsCursor.close();
 							onResume();

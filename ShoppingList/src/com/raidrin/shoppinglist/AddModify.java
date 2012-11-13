@@ -117,7 +117,7 @@ public class AddModify extends Activity {
 				if (!createMode) {
 					// Update the table name.
 					controller
-							.updateTableName(shoppingListId, shoppingListName);
+							.updateShoppingListName(shoppingListId, shoppingListName);
 					// Delete all shopping list items. The reason for this is to make the modification simple.
 					// The data that were now in the EditTexts are the ones to be saved. 
 					controller
@@ -133,7 +133,7 @@ public class AddModify extends Activity {
 					// Call the method to add items. The method returns whether the values that are added are valid/invalid.
 					// meaning the rows have at least one row. This is used to check if the Dialog should be shown.
 					itemsAddedValid = controller
-							.createOrAddItemsInShoppingList(shoppingListName,
+							.createOrModifyShoppingList(shoppingListName,
 									MAX_ITEMS, shoppingListTableLayout,
 									createMode);
 

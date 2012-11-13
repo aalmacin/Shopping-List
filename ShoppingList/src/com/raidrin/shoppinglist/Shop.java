@@ -163,7 +163,7 @@ public class Shop extends ListActivity {
 			throw new Error("No shopping list item selected.");
 
 		shoppingListNameTextView.setText(controller
-				.getShoppingNameById(shoppingListId));
+				.getShoppingListNameById(shoppingListId));
 		shoppingListCursor = controller
 				.getAllNameAndQuantityCursor(shoppingListId);
 		listViewAdapter = new ItemViewAdapter(this, R.layout.shop, shoppingListCursor, new String[] {}, new int[] {});
