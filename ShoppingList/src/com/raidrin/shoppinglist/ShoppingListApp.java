@@ -65,7 +65,7 @@ public class ShoppingListApp extends ListActivity {
 
 	protected void onResume() {
 		super.onResume();
-		if(!controller.checkIfAListExists())
+		if(!controller.checkIfAShoppingListExists())
 		{
 			addShoppingListTextView.setVisibility(View.VISIBLE);
 		}
@@ -169,7 +169,7 @@ public class ShoppingListApp extends ListActivity {
 					{						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							controller.deleteAllShoppingListItemsByShoppingListId(selectedItem);
+							controller.deleteAllShoppingListAndItemsByShoppingListId(selectedItem);
 							listViewAdapter.notifyDataSetChanged();
 							allShoppingListsCursor.close();
 							onResume();

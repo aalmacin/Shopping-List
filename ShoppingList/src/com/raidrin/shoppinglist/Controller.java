@@ -187,10 +187,10 @@ public class Controller {
 		contentValues.put(ITEM_SHOPPING_LIST_ID, id);
 
 		// Open the database.
-		DBHelper dbHelper = new DBHelper();
+		DBAdapter dbHelper = new DBAdapter();
 		// Tell the database what kind of database open will be used then insert
 		// the values in the items table.
-		dbHelper.openToWrite().db.insert(ITEMS_TABLE, null, contentValues);
+		dbHelper.openToWrite().insert(ITEMS_TABLE, null, contentValues);
 		dbHelper.close(); // Close the Database.
 	} // End of addItem
 
@@ -202,7 +202,7 @@ public class Controller {
 	 */
 	public void addShoppingList(String shoppingListName) {
 		// Open the database.
-		DBHelper dbHelper = new DBHelper();
+		DBAdapter dbHelper = new DBAdapter();
 		// Create a ContentValues object that is used to insert the items in the
 		// database. A key-value pair is used where the key will be the column
 		// names.
@@ -210,8 +210,7 @@ public class Controller {
 		contentValues.put(SHOPPING_LIST_NAME, shoppingListName);
 		// Tell the database what kind of database open will be used then insert
 		// the value in the shopping list table.
-		dbHelper.openToWrite().db.insert(SHOPPING_LIST_TABLE, null,
-				contentValues);
+		dbHelper.openToWrite().insert(SHOPPING_LIST_TABLE, null, contentValues);
 		dbHelper.close(); // Close the database
 	} // End of addShoppingList
 
@@ -227,13 +226,14 @@ public class Controller {
 	public int getShoppingIdByValue(String value) {
 		int id = -1;
 		// Open the database.
-		DBHelper dbHelper = new DBHelper();
+		DBAdapter dbHelper = new DBAdapter();
 		// The result of the database query is saved in the tempCursor variable.
 		// The cursor has all the values that is returned by the query and is
 		// used to access each data.
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE,
-				new String[] { SHOPPING_LIST_ID }, SHOPPING_LIST_NAME + "='"
-						+ value + "'", null, null, null, null);
+		Cursor tempCursor = dbHelper.openToRead()
+				.query(SHOPPING_LIST_TABLE, new String[] { SHOPPING_LIST_ID },
+						SHOPPING_LIST_NAME + "='" + value + "'", null, null,
+						null, null);
 		// Move the cursor to first and if the position is not the first, then
 		// don't do anything.
 		if (tempCursor.moveToFirst())
@@ -260,10 +260,10 @@ public class Controller {
 		String value = null; // Set the value to null initially.
 		// Open the database and take the shopping list name from the shopping
 		// list table where the shopping list id is the same as the id passed.
-		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE,
-				new String[] { SHOPPING_LIST_NAME }, SHOPPING_LIST_ID + "='"
-						+ id + "'", null, null, null, null);
+		DBAdapter dbHelper = new DBAdapter();
+		Cursor tempCursor = dbHelper.openToRead().query(SHOPPING_LIST_TABLE,
+				new String[] { SHOPPING_LIST_NAME },
+				SHOPPING_LIST_ID + "='" + id + "'", null, null, null, null);
 		// While the cursor haven't reached the last item, access the current
 		// cursor and save its value to the id variable.
 		if (tempCursor.moveToFirst())
@@ -278,10 +278,14 @@ public class Controller {
 	} // End of getShoppingListNameById method
 
 	/**
-	 * Checks if the shopping list is unique and no shopping list with the same name exists.
+	 * Checks if the shopping list is unique and no shopping list with the same
+	 * name exists.
 	 * 
-	 * @param name The name of the shopping list to be checked
-	 * @return The result of the check. True if a shopping list with the given value doesn't exist. False if a shopping list with the name passed already exists.
+	 * @param name
+	 *            The name of the shopping list to be checked
+	 * @return The result of the check. True if a shopping list with the given
+	 *         value doesn't exist. False if a shopping list with the name
+	 *         passed already exists.
 	 */
 	public boolean shoppingListIsUnique(String name) {
 		return (getShoppingIdByValue(name) < 0) ? true : false;
@@ -289,35 +293,58 @@ public class Controller {
 
 	/**
 	 * Take the cursor that is used to grab all the shopping lists.
+	 * 
 	 * @return The cursor returned by the select query.
 	 */
 	public Cursor takeShoppingListCursor() {
-		return new DBHelper().openToRead().db.query(SHOPPING_LIST_TABLE, null, null,
-				null, null, null, null);
+		return new DBAdapter().openToRead().query(SHOPPING_LIST_TABLE, null,
+				null, null, null, null, null);
 	} // End of takeShoppingListCursor
 
 	/**
-	 * Delete all the shopping list items where shoppingid matches the shopping list.
-	 * @param id The id that is used to check which shopping list items and which shopping list should be deleted.
+	 * Delete all the shopping list and shopping list items where shoppingid
+	 * matches the shopping list.
+	 * 
+	 * @param id
+	 *            The id that is used to check which shopping list items and
+	 *            which shopping list with items should be deleted.
 	 */
-	public void deleteAllShoppingListItemsByShoppingListId(int id) {
+	public void deleteAllShoppingListAndItemsByShoppingListId(int id) {
 		// Open the database and delete the items with the given id.
-		DBHelper dbHelper = new DBHelper();
-		dbHelper.openToWrite().db.delete(ITEMS_TABLE, ITEM_SHOPPING_LIST_ID + "= " + id, null);
-		dbHelper.openToWrite().db.delete(SHOPPING_LIST_TABLE, SHOPPING_LIST_ID + "=" + id, null);
+		DBAdapter dbHelper = new DBAdapter();
+		dbHelper.openToWrite().delete(ITEMS_TABLE,
+				ITEM_SHOPPING_LIST_ID + "= " + id, null);
+		dbHelper.openToWrite().delete(SHOPPING_LIST_TABLE,
+				SHOPPING_LIST_ID + "=" + id, null);
 		dbHelper.close(); // Close the database.
-		
+
 		showAllItems(); // Show all database items in the console.
-	} // End of deleteAllShoppingListItemsByShoppingListId
+	} // End of deleteAllShoppingListItemsByShoppingListId Method
 
 	/**
-	 * Shows all the items the database currently have. This method is  used for debugging purposes.
+	 * Delete all the shopping list items where shoppingid matches the shopping
+	 * list.
+	 * 
+	 * @param id
+	 *            The id that is used to check which shopping list items and
+	 *            which shopping list items should be deleted.
+	 */
+	public void deleteAllShoppingListItemsByShoppingId(int shoppingListId) {
+		DBAdapter dbHelper = new DBAdapter();
+		dbHelper.openToWrite().delete(ITEMS_TABLE,
+				"shoppinglistid = " + shoppingListId, null);
+		dbHelper.close();
+	} // End of deleteAllShoppingListItemsByShoppingId Method
+
+	/**
+	 * Shows all the items the database currently have. This method is used for
+	 * debugging purposes.
 	 */
 	private void showAllItems() {
 		// Open the database and show each and every shopping list.
-		DBHelper dbHelper = new DBHelper();
+		DBAdapter dbHelper = new DBAdapter();
 		// Output each and every row from the shopping list table.
-		Cursor curs = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE, null,
+		Cursor curs = dbHelper.openToRead().query(SHOPPING_LIST_TABLE, null,
 				null, null, null, null, null);
 		System.out
 				.println("----------------- SHOPPING LISTS -----------------");
@@ -332,7 +359,7 @@ public class Controller {
 		curs.close(); // Close the cursor
 
 		// Output each and every row from the items table.
-		Cursor curs2 = dbHelper.openToRead().db.query(ITEMS_TABLE, null, null,
+		Cursor curs2 = dbHelper.openToRead().query(ITEMS_TABLE, null, null,
 				null, null, null, null);
 		System.out
 				.println("----------------- SHOPPING LISTS ITEMS -----------------");
@@ -354,126 +381,239 @@ public class Controller {
 	} // End of showAllItems method
 
 	/**
-	 * Updates a
+	 * Updates a shopping list name from the shopping list table.
+	 * 
 	 * @param shoppingId
+	 *            The shopping id of the table that needs to be changed.
 	 * @param newName
+	 *            The new name of the shopping list
 	 */
 	public void updateShoppingListName(int shoppingId, String newName) {
-		DBHelper dbHelper = new DBHelper();
+		// Open the database and update the value of the name to the one passed.
+		DBAdapter dbHelper = new DBAdapter();
+		// Create a ContentValues object that is used to update the items in the
+		// database.
 		ContentValues cv = new ContentValues();
 		cv.put(SHOPPING_LIST_NAME, newName);
-		dbHelper.openToWrite().db.update(SHOPPING_LIST_TABLE, cv,
+		dbHelper.openToWrite().update(SHOPPING_LIST_TABLE, cv,
 				SHOPPING_LIST_ID + "=" + shoppingId, null);
-		dbHelper.close();
-	}
+		dbHelper.close(); // Close the database.
+	} // End of updateShoppingListName method
 
+	/**
+	 * Fills up each shopping list item row in the AddModify Activity with the
+	 * value from the database.
+	 * 
+	 * @param shoppingListId
+	 *            The shopping list id that identifies which shopping list the
+	 *            items belong to.
+	 * @param shoppingListEditText
+	 *            The EditText that shows the name of the shopping list.
+	 * @param shoppingListTableLayout
+	 *            The TableLayout that has all the ShoppingListItem rows.
+	 */
 	public void fillUpShoppingItems(int shoppingListId,
 			EditText shoppingListEditText, TableLayout shoppingListTableLayout) {
+		// Store all name and quantity values to an ArrayList<ArrayList<String>>
+		// variable.
 		ArrayList<ArrayList<String>> allValues = getAllNameAndQuantityValues(shoppingListId);
+		// Set the shoppingListEditText's text to the name of the shopping list
+		// with the shoppingId passed.
 		shoppingListEditText.setText(getShoppingListNameById(shoppingListId));
+		int i = 0; // used as an index.
 		Iterator<ArrayList<String>> it = allValues.iterator();
-		int i = 0;
 		while (it.hasNext()) {
 			ArrayList<String> currentItem = it.next();
 			ShoppingListItem tempItem = (ShoppingListItem) shoppingListTableLayout
-					.getChildAt(i);
+					.getChildAt(i); // Get each item from the table layout and
+									// save a reference to a variable.
+
+			// Get a reference of the EditText and TextView from the current
+			// row.
 			EditText tempEditText = (EditText) tempItem.getChildAt(0);
-			tempEditText.setText(currentItem.get(0));
 			TextView tempTextView = (TextView) tempItem.getChildAt(2);
+
+			// Set the current row's EditText and TextView value to the value
+			// from allValues
+			tempEditText.setText(currentItem.get(0));
 			tempTextView.setText(currentItem.get(1));
+
+			// Set the quantity field's value of the ShoppingListItem to the
+			// quantity from the row
 			tempItem.setQuantity(Integer.parseInt(currentItem.get(1)));
-			i++;
-		}
-	}
+			i++; // Increment the index
+		} // End of Iterator While
+	} // End of fillUpShoppingItems method
 
-	public void deleteAllShoppingListItemsByShoppingId(int shoppingListId) {
-		DBHelper dbHelper = new DBHelper();
-		dbHelper.openToWrite().db.delete(ITEMS_TABLE, "shoppinglistid = "
-				+ shoppingListId, null);
-		dbHelper.close();
-	}
-
+	/**
+	 * Get all the name and quantity values of all the shopping list items with
+	 * the same id as the one passed.
+	 * 
+	 * @param shoppingListId
+	 *            The id of the shopping list.
+	 * @return The name and quantity values of the specified shopping list.
+	 */
 	public ArrayList<ArrayList<String>> getAllNameAndQuantityValues(
 			int shoppingListId) {
 		ArrayList<ArrayList<String>> allValues = new ArrayList<ArrayList<String>>();
-		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(ITEMS_TABLE,
+		// Open the database and take the values and quantity into a tempCursor.
+		DBAdapter dbHelper = new DBAdapter();
+		Cursor tempCursor = dbHelper.openToRead().query(ITEMS_TABLE,
 				new String[] { ITEM_NAME, ITEM_QUANTITY },
 				ITEM_SHOPPING_LIST_ID + " = " + shoppingListId, null, null,
 				null, null);
-		tempCursor.moveToFirst();
-		while (!tempCursor.isAfterLast()) {
-			ArrayList<String> tempArrayList = new ArrayList<String>();
-			tempArrayList.add(tempCursor.getString(tempCursor
-					.getColumnIndex(ITEM_NAME)));
-			tempArrayList.add(tempCursor.getString(tempCursor
-					.getColumnIndex(ITEM_QUANTITY)));
-			allValues.add(tempArrayList);
-			tempCursor.moveToNext();
-		}
-		tempCursor.close();
-		dbHelper.close();
-		return allValues;
-	}
+		// Go through each item in the cursor and add the values into the
+		// allValues variable.
+		if (tempCursor.moveToFirst())
+			while (!tempCursor.isAfterLast()) {
+				ArrayList<String> tempArrayList = new ArrayList<String>();
+				// Take the item name and quantity.
+				tempArrayList.add(tempCursor.getString(tempCursor
+						.getColumnIndex(ITEM_NAME)));
+				tempArrayList.add(tempCursor.getString(tempCursor
+						.getColumnIndex(ITEM_QUANTITY)));
+				allValues.add(tempArrayList); // Add the tempArrayList to the
+												// allValues ArrayList
+				tempCursor.moveToNext(); // Move to the next item
+			}
+		else
+			throw new Error(
+					"There is no shopping list id that matches with the given id.");
+		tempCursor.close(); // Close the temporary cursor.
+		dbHelper.close(); // Close the database
+		return allValues; // Return all the values from the database
+	} // End of getAllNameAndQuantityValues Method
 
+	/**
+	 * Get the cursor that has the name and quantity of each shopping list item.
+	 * 
+	 * @param shoppingListId
+	 *            The id of the shopping list.
+	 * @return The cursor that contains all the values of each shopping list
+	 *         item.
+	 */
 	public Cursor getAllNameAndQuantityCursor(int shoppingListId) {
-		DBHelper dbHelper = new DBHelper();
-		return dbHelper.openToRead().db.query(ITEMS_TABLE, new String[] {
-				ITEM_ID, ITEM_NAME, ITEM_QUANTITY }, ITEM_SHOPPING_LIST_ID
-				+ " = " + shoppingListId, null, null, null, null);
-	}
+		return new DBAdapter().openToRead().query(ITEMS_TABLE,
+				new String[] { ITEM_ID, ITEM_NAME, ITEM_QUANTITY },
+				ITEM_SHOPPING_LIST_ID + " = " + shoppingListId, null, null,
+				null, null);
+	} // End of getAllNameAndQuantityCursor Method
 
-	public boolean checkIfAListExists() {
-		boolean notEmpty = false;
-		DBHelper dbHelper = new DBHelper();
-		Cursor tempCursor = dbHelper.openToRead().db.query(SHOPPING_LIST_TABLE,
+	/**
+	 * Check if a shopping list exist in the database.
+	 * 
+	 * @return The result of the check. If empty, return false. Otherwise,
+	 *         return true.
+	 */
+	public boolean checkIfAShoppingListExists() {
+		boolean notEmpty = false; // Set the notEmpty to false.
+		// Open the database
+		DBAdapter dbHelper = new DBAdapter();
+		// Do the query to get a result.
+		Cursor tempCursor = dbHelper.openToRead().query(SHOPPING_LIST_TABLE,
 				null, null, null, null, null, null);
-		if (tempCursor.moveToFirst()) {
+		// move the cursor to first. If the cursor has contents in it, then set
+		// notEmpty to true.
+		if (tempCursor.moveToFirst())
 			notEmpty = true;
-		}
-		tempCursor.close();
-		dbHelper.close();
-		return notEmpty;
-	}
+		tempCursor.close(); // Close the cursor.
+		dbHelper.close(); // Close the database.
+		return notEmpty; // Return the result of the check.
+	} // End of checkIfAShoppingListExists Method
 
-	private class DBHelper {
+	/**
+	 * @author Aldrin Jerome Almacin
+	 *         <p>
+	 *         <b>Date: </b>November 13, 2012
+	 *         </p>
+	 *         <p>
+	 *         <b>Description: </b>DBAdapter is a class used to open and close
+	 *         the database. If openToRead is called, the database will only
+	 *         process file reading. While with openToWrite, you can add and
+	 *         manipulate data in the database.
+	 *         </p>
+	 */
+	private class DBAdapter {
+		// The SQLiteDatabase is saved in the db field.
 		private SQLiteDatabase db;
 
-		public DBHelper() {
+		/**
+		 * Empty Constructor
+		 */
+		public DBAdapter() {
 		}
 
+		/**
+		 * Closes the database.
+		 */
 		public void close() {
 			db.close();
-		}
+		} // End of close method
 
-		public DBHelper openToRead() throws android.database.SQLException {
+		/**
+		 * Opens the readable database.
+		 * 
+		 * @return The Database that can be used to access data from the
+		 *         database.
+		 */
+		public SQLiteDatabase openToRead() throws android.database.SQLException {
 			ShoppingListSQLHelper shoppingListSQLHelper = new ShoppingListSQLHelper(
 					context, DATABASE_NAME, null, DATABASE_VERSION);
+			// Get the db from the shoppingListSQLHelper
 			db = shoppingListSQLHelper.getReadableDatabase();
-			return this;
-		}
+			return db; // Return the db
+		} // End of openToRead Method
 
-		public DBHelper openToWrite() throws android.database.SQLException {
+		/**
+		 * Opens the writable database.
+		 * 
+		 * @return The Database that can be used to modify data in the database.
+		 */
+		public SQLiteDatabase openToWrite()
+				throws android.database.SQLException {
 			ShoppingListSQLHelper shoppingListSQLHelper = new ShoppingListSQLHelper(
 					context, DATABASE_NAME, null, DATABASE_VERSION);
+			// Get the db from the shoppingListSQLHelper
 			db = shoppingListSQLHelper.getWritableDatabase();
-			return this;
-		}
+			return db; // Return the db
+		} // End of openToWrite Method
 
+		/**
+		 * <p>
+		 * <b>Date: </b>November 13, 2012
+		 * </p>
+		 * <p>
+		 * <b>Description: </b>ShoppingListSQLHelper that extends the
+		 * SQLiteOpenHelper class which helps the access to database easier.
+		 * Database is also created in this class from the queries above.
+		 * </p>
+		 * 
+		 */
 		private class ShoppingListSQLHelper extends SQLiteOpenHelper {
+			/**
+			 * The constructor of the ShoppingListSQLHelper class
+			 * 
+			 * @param context The context of the Activity using this
+			 * @param name The name of the Database
+			 * @param version The database version
+			 */
 			public ShoppingListSQLHelper(Context context, String name,
 					CursorFactory factory, int version) {
 				super(context, name, factory, version);
-			}
+			} // End of Constructor
 
+			/**
+			 * Method that gets called when the db is getting initialized. Creates the table that the app needs.
+			 * 
+			 * @param db The database that is to be created.
+			 */
 			public void onCreate(SQLiteDatabase db) {
 				db.execSQL(SHOPPING_LIST_TABLE_QUERY);
 				db.execSQL(ITEMS_TABLE_CREATE_QUERY);
-			}
-
+			} // End of onCreate method
+			
 			public void onUpgrade(SQLiteDatabase db, int oldVersion,
-					int newVersion) {
-			}
+					int newVersion) {}
 		}
 	}
 }
