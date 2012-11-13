@@ -65,7 +65,7 @@ public class ShoppingListApp extends ListActivity {
 
 	protected void onResume() {
 		super.onResume();
-		if(controller.checkIfAListExists())
+		if(!controller.checkIfAListExists())
 		{
 			addShoppingListTextView.setVisibility(View.VISIBLE);
 		}

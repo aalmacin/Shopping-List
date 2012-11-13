@@ -14,22 +14,35 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+/**
+ * FileName: AddModify.java
+ * 
+ * @author Aldrin Jerome Almacin
+ * <p><b>Date: </b>November 11, 2012 </p>
+ * <p><b>Description: </b>AddModify is a class that extends Activity which
+ *           lets the user add an item, modify an existing one, give the list a
+ *           name/modify an existing one, and save the given changes into the
+ *           database.</p>
+ * 
+ */
 public class AddModify extends Activity {
 
-	private static final int MAX_ITEMS = 20;
-	private static final String TAG_NAME = "Debug";
-	private Button cancelButton;
-	private Button saveButton;
+	private static final int MAX_ITEMS = 20; // The maximum number of items in a single shopping list.
 
-	private Context context;
+	private Context context; // Used to save a copy of the context so that it can be used throughout the class.
+	
 	private TableLayout shoppingListTableLayout;
+	
 	private EditText shoppingListEditText;
-	private Controller controller;
-	private TextView modifyCreateTextView;
+	
+	private Button cancelButton; // The button used to cancel the AddModify activity.
+	private Button saveButton; // The button used to allow the saving of the shopping list items
+	
+	private Controller controller; // The controller which is used to get processed information from the database.
 
+	private TextView modifyCreateTextView; // The TextView that shows
 	private String shoppingListName;
 	private boolean createMode;
-
 	private int shoppingListId;
 
 	@Override
@@ -56,38 +69,45 @@ public class AddModify extends Activity {
 		saveButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				shoppingListId = getIntent().getIntExtra(ShoppingListApp.SHOPPING_LIST_ID, -1);
+				shoppingListId = getIntent().getIntExtra(
+						ShoppingListApp.SHOPPING_LIST_ID, -1);
 				shoppingListName = shoppingListEditText.getText().toString();
-				if(!createMode){
-					Log.d(TAG_NAME, "Deleting");
-					controller.updateTableName(shoppingListId,shoppingListName);
-					controller.deleteAllShoppingListItemsByShoppingId(controller.getShoppingIdByValue(shoppingListName));
+				if (!createMode) {
+					controller
+							.updateTableName(shoppingListId, shoppingListName);
+					controller
+							.deleteAllShoppingListItemsByShoppingId(controller
+									.getShoppingIdByValue(shoppingListName));
 				}
 				boolean itemsAddedSuccesfully = false;
-				
-				if(!shoppingListEditText.getText().toString().equals(""))
-					itemsAddedSuccesfully = controller.createOrAddItemsInShoppingList(shoppingListName,	MAX_ITEMS, shoppingListTableLayout,createMode);
-				
+
+				if (!shoppingListEditText.getText().toString().equals(""))
+					itemsAddedSuccesfully = controller
+							.createOrAddItemsInShoppingList(shoppingListName,
+									MAX_ITEMS, shoppingListTableLayout,
+									createMode);
+
 				if (itemsAddedSuccesfully)
 					finish();
-				 else 
-					showAlertDialog(getString(R.string.shopping_list_error), getString(R.string.you_need_at_least), getString(R.string.fix),
-							new AlertDialog.OnClickListener()
-							{						
+				else
+					showAlertDialog(getString(R.string.shopping_list_error),
+							getString(R.string.you_need_at_least),
+							getString(R.string.fix),
+							new AlertDialog.OnClickListener() {
 								@Override
-								public void onClick(DialogInterface dialog, int which) {
+								public void onClick(DialogInterface dialog,
+										int which) {
 								}
 							});
-			} 
+			}
 		});
 		runtimeCreateRows();
 
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 	}
-	
 
 	/**
 	 * The AlertDialog that will be shown on the screen is created and shown.
@@ -147,7 +167,6 @@ public class AddModify extends Activity {
 	}
 
 	private void fillUpForms() {
-		// TODO Auto-generated method stub
 		int shoppingListId = getIntent().getIntExtra(
 				ShoppingListApp.SHOPPING_LIST_ID, -1);
 		controller.fillUpShoppingItems(shoppingListId, shoppingListEditText,
