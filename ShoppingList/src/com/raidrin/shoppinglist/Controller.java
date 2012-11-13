@@ -263,14 +263,14 @@ public class Controller {
 			db.close();
 		}
 		
-		public DBHelper openToRead()
+		public DBHelper openToRead() throws android.database.SQLException
 		{
 			ShoppingListSQLHelper shoppingListSQLHelper = new ShoppingListSQLHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
 			db = shoppingListSQLHelper.getReadableDatabase();
 			return this;
 		}
 		
-		public DBHelper openToWrite()
+		public DBHelper openToWrite() throws android.database.SQLException
 		{
 	        ShoppingListSQLHelper shoppingListSQLHelper = new ShoppingListSQLHelper(context, DATABASE_NAME, null, DATABASE_VERSION);
 			db = shoppingListSQLHelper.getWritableDatabase();

@@ -18,76 +18,125 @@ import android.widget.TextView;
  * FileName: AddModify.java
  * 
  * @author Aldrin Jerome Almacin
- * <p><b>Date: </b>November 11, 2012 </p>
- * <p><b>Description: </b>AddModify is a class that extends Activity which
- *           lets the user add an item, modify an existing one, give the list a
- *           name/modify an existing one, and save the given changes into the
- *           database.</p>
+ *         <p>
+ *         <b>Date: </b>November 11, 2012
+ *         </p>
+ *         <p>
+ *         <b>Description: </b>AddModify is a class that extends Activity which
+ *         lets the user add an item, modify an existing one, give the list a
+ *         name/modify an existing one, and save the given changes into the
+ *         database.
+ *         </p>
  * 
  */
 public class AddModify extends Activity {
 
-	private static final int MAX_ITEMS = 20; // The maximum number of items in a single shopping list.
+	private static final int MAX_ITEMS = 20; // The maximum number of items in a
+												// single shopping list.
 
-	private Context context; // Used to save a copy of the context so that it can be used throughout the class.
-	
-	private TableLayout shoppingListTableLayout;
-	
-	private EditText shoppingListEditText;
-	
-	private Button cancelButton; // The button used to cancel the AddModify activity.
-	private Button saveButton; // The button used to allow the saving of the shopping list items
-	
-	private Controller controller; // The controller which is used to get processed information from the database.
+	private Context context; // Used to save a copy of the context so that it
+								// can be used throughout the class.
 
-	private TextView modifyCreateTextView; // The TextView that shows
-	private String shoppingListName;
-	private boolean createMode;
-	private int shoppingListId;
+	private TableLayout shoppingListTableLayout; // The tableLayout that holds
+													// all the shopping lists.
 
+	private TextView modifyCreateTextView; // The TextView that shows whether
+											// the user is in the modify or in
+											// the create mode.
+	private EditText shoppingListEditText; // The edit text that takes the
+											// shopping list name from the user.
+
+	private Button cancelButton; // The button used to cancel the AddModify
+									// activity.
+	private Button saveButton; // The button used to allow the saving of the
+								// shopping list items
+
+	private Controller controller; // The controller which is used to get
+									// processed information from the database.
+
+	private String shoppingListName; // The name of the shopping list that is
+										// given by the user.
+
+	private boolean createMode; // The createMode that states whether the
+								// activity is on create/modify.
+
+	private int shoppingListId; // The id of the shoppingList being modified.
+
+	/**
+	 * When the application starts/created, onCreate method is executed.
+	 * Therefore, all initializations are done in this method.
+	 * 
+	 * @param savedInstanceState
+	 *            The saved state of the application
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// In order for this override to be valid. A call to the super method
+		// must be done.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.add_modify);
-		createMode = true;
-		context = this;
-		controller = new Controller(context);
+		setContentView(R.layout.add_modify); // Set the content view to
+												// add_modify. File:
+												// add_modify.xml
+		context = this; // set the context to this.
+		controller = new Controller(context); // Create an instance of
+												// Controller.
 
+		// Find the appropriate views from the XML and reference them through
+		// the saved variables.
+		shoppingListTableLayout = (TableLayout) findViewById(R.id.shoppingListTableLayout);
 		modifyCreateTextView = (TextView) findViewById(R.id.modifyCreateTextView);
 		shoppingListEditText = (EditText) findViewById(R.id.shoppingListEditText);
-		shoppingListEditText.selectAll();
-		shoppingListTableLayout = (TableLayout) findViewById(R.id.shoppingListTableLayout);
-
 		cancelButton = (Button) findViewById(R.id.cancelButton);
-		cancelButton.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				finish();
-			}
-		});
 		saveButton = (Button) findViewById(R.id.saveButton);
-		saveButton.setOnClickListener(new OnClickListener() {
 
+		// Select all the text inside the shoppingListEditText
+		shoppingListEditText.selectAll();
+
+		// set the OnClickListener anonymous inner class of the cancelButton.
+		cancelButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				finish(); // Close this activity.
+			} // End of onClick method.
+		} // End of OnClickListener
+				);
+
+		// set the OnClickListener anonymous inner class of the saveButton.
+		saveButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// Take the shopping list id passed by the Main Activity to this
+				// intent.
+				// And save it to the shoppingListId field
 				shoppingListId = getIntent().getIntExtra(
 						ShoppingListApp.SHOPPING_LIST_ID, -1);
+
+				// Save the shopping list name provided by the user to the
+				// shoppingListName field.
 				shoppingListName = shoppingListEditText.getText().toString();
+
+				// If the mode is on modify, then update the tableName then
+				// delete all the shoppingListItems that is a child of the given
+				// shopping list.
 				if (!createMode) {
+					// Update the table name.
 					controller
 							.updateTableName(shoppingListId, shoppingListName);
+					// Delete all shopping list items. The reason for this is to make the modification simple.
+					// The data that were now in the EditTexts are the ones to be saved. 
 					controller
-							.deleteAllShoppingListItemsByShoppingId(controller
-									.getShoppingIdByValue(shoppingListName));
-				}
-				boolean itemsAddedSuccesfully = false;
+							.deleteAllShoppingListItemsByShoppingId(shoppingListId);
+				} // End of CreateMode if.
+				
+				// A flag that states whether the items are valid/invalid.
+				// Only when the user gave a valid shopping list name, item name, and quantity will this be valid.
+				boolean itemsAddedValid = false;
 
 				if (!shoppingListEditText.getText().toString().equals(""))
-					itemsAddedSuccesfully = controller
+					itemsAddedValid = controller
 							.createOrAddItemsInShoppingList(shoppingListName,
 									MAX_ITEMS, shoppingListTableLayout,
 									createMode);
 
-				if (itemsAddedSuccesfully)
+				if (itemsAddedValid)
 					finish();
 				else
 					showAlertDialog(getString(R.string.shopping_list_error),
