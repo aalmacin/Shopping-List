@@ -77,7 +77,7 @@ public class ShoppingListApp extends ListActivity {
 		listViewAdapter = new SimpleCursorAdapterExtension(this,
 				R.layout.shoppinglists_row,
 				allShoppingListsCursor ,
-				new String[] { Controller.LIST_NAME },
+				new String[] { Controller.SHOPPING_LIST_NAME },
 				new int[] { R.id.textView1 });
 		setListAdapter(listViewAdapter);
 	}
@@ -169,8 +169,8 @@ public class ShoppingListApp extends ListActivity {
 					{						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							controller.deleteTable(Controller.SHOPPING_LIST_TABLE,
-									Controller.LIST_ID, selectedItem);
+							controller.deleteAllShoppingListItemsByShoppingListId(Controller.SHOPPING_LIST_TABLE,
+									Controller.SHOPPING_LIST_ID, selectedItem);
 							listViewAdapter.notifyDataSetChanged();
 							allShoppingListsCursor.close();
 							onResume();
@@ -191,7 +191,7 @@ public class ShoppingListApp extends ListActivity {
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			super.bindView(view, context, cursor);
-			view.setTag(cursor.getString(cursor.getColumnIndex(Controller.LIST_ID)));
+			view.setTag(cursor.getString(cursor.getColumnIndex(Controller.SHOPPING_LIST_ID)));
 		}
 	}
 

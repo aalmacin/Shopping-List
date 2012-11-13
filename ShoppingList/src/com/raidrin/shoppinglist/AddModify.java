@@ -232,4 +232,4 @@ public class AddModify extends Activity {
 		for (int i = 0; i < MAX_ITEMS; i++) 
 			shoppingListTableLayout.addView(new ShoppingListItem(this));
 	} // End of runtimeCreateRows
-}
+} // End of AddModify Class
