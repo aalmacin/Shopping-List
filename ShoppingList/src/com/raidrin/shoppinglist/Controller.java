@@ -13,12 +13,13 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+
 /**
  * FileName: Controller.java
  * 
  * @author Aldrin Jerome Almacin
  *         <p>
- *         <b>Date: </b>November 11, 2012
+ *         <b>Date: </b>November 13, 2012
  *         </p>
  *         <p>
  *         <b>Description: </b>Controller is used to make a connection from the
@@ -73,7 +74,6 @@ public class Controller {
 			+ "(" + SHOPPING_LIST_ID + "));";
 
 	private Context context; // A copy of the Activity context that is passed as
-								// a constructor
 
 	/**
 	 * The constructor of the controller class.
@@ -484,6 +484,8 @@ public class Controller {
 		return allValues; // Return all the values from the database
 	} // End of getAllNameAndQuantityValues Method
 
+	private SQLiteDatabase db; // A reference to the database.
+	private Cursor cursor; // A reference to a cursor returned.
 	/**
 	 * Get the cursor that has the name and quantity of each shopping list item.
 	 * 
@@ -493,12 +495,23 @@ public class Controller {
 	 *         item.
 	 */
 	public Cursor getAllNameAndQuantityCursor(int shoppingListId) {
-		return new DBAdapter().openToRead().query(ITEMS_TABLE,
-				new String[] { ITEM_ID, ITEM_NAME, ITEM_QUANTITY },
-				ITEM_SHOPPING_LIST_ID + " = " + shoppingListId, null, null,
-				null, null);
+		db = new DBAdapter().openToRead();
+		cursor = db.query(ITEMS_TABLE,
+					new String[] { ITEM_ID, ITEM_NAME, ITEM_QUANTITY },
+					ITEM_SHOPPING_LIST_ID + " = " + shoppingListId, null, null,
+					null, null);
+		return cursor;
 	} // End of getAllNameAndQuantityCursor Method
 
+	/**
+	 * Closes the cursor of the DB that is not closed.
+	 */
+	public void closeCursor()
+	{
+		cursor.close();
+		db.close();
+	} // End of closeCursor
+	
 	/**
 	 * Check if a shopping list exist in the database.
 	 * 
@@ -614,6 +627,6 @@ public class Controller {
 			
 			public void onUpgrade(SQLiteDatabase db, int oldVersion,
 					int newVersion) {}
-		}
-	}
-}
+		} // End of ShoppingListSQLHelper Private Class
+	} // End of DBAdapter Private Class
+} // End of Controller Class

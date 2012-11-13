@@ -12,12 +12,13 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+
 /**
  * FileName: AddModify.java
  * 
  * @author Aldrin Jerome Almacin
  *         <p>
- *         <b>Date: </b>November 11, 2012
+ *         <b>Date: </b>November 13, 2012
  *         </p>
  *         <p>
  *         <b>Description: </b>AddModify is a class that extends Activity which

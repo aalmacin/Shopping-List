@@ -1,19 +1,14 @@
 package com.raidrin.shoppinglist;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,90 +16,126 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
+/**
+ * FileName: Shop.java
+ * 
+ * @author Aldrin Jerome Almacin
+ *         <p>
+ *         <b>Date: </b>November 13, 2012
+ *         </p>
+ *         <p>
+ *         <b>Description: </b>Shop is a ListActivity that shows all the Items
+ *         in a shopping list and is to be checked while the user is shopping.
+ *         </p>
+ * 
+ */
 public class Shop extends ListActivity {
 
-	private int shoppingListId;
-	private TextView shoppingListNameTextView;
-	private Controller controller;
-	private Button doneButton;
-	private SimpleCursorAdapter listViewAdapter;
-	private Cursor shoppingListCursor;
-	private ArrayList<ShoppingItem> shoppingListItems;
-	private static final String TAG_NAME = "Debug";
+	private int shoppingListId;	// The id of the shopping list
+	private Button doneButton; // The button that the user clicks when the shopping is done.	
+	private TextView shoppingListNameTextView; // The TextView that shows the name of the shopping list	
+	private SimpleCursorAdapter listViewAdapter; // The adapter that is used to draw the views with the db values.	
+	private Controller controller; // An instance of the controller that is used to grab and add data to the database.	
+	private ArrayList<ShoppingItem> shoppingItems; // All the ShoppingItem are stored in an ArrayList
 
+	/**
+	 * When the application starts/created, onCreate method is executed.
+	 * Therefore, all initializations are done in this method.
+	 * 
+	 * @param savedInstanceState
+	 *            The saved state of the application
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		// In order for this override to be valid. A call to the super method
+		// must be done.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.shop);
+		setContentView(R.layout.shop);  // Set the content view to
+										// shop. File:
+										// shop.xml
 		controller = new Controller(this);
-		shoppingListItems = new ArrayList<ShoppingItem>();
+		shoppingItems = new ArrayList<ShoppingItem>();
 		shoppingListNameTextView = (TextView) findViewById(R.id.shoppingListNameTextView);
 		doneButton = (Button) findViewById(R.id.done_button);
 		doneButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				String msg = getUncheckedListsMessage();
-				if(msg != null)
-				{
+				if (msg != null) {
 					showAlertDialog("You still need:", msg, "Continue",
-							new AlertDialog.OnClickListener()
-							{						
+							new AlertDialog.OnClickListener() {
 								@Override
-								public void onClick(DialogInterface dialog, int which) {
+								public void onClick(DialogInterface dialog,
+										int which) {
 									finish();
 								}
 							});
-				}
-				else
+				} else
 					finish();
 			}
 		});
-	}
 
+		shoppingListId = getIntent().getIntExtra(
+				ShoppingListApp.SHOPPING_LIST_ID, -1);
+		if (shoppingListId < 0)
+			throw new Error("No shopping list item selected.");
+
+		shoppingListNameTextView.setText(controller
+				.getShoppingListNameById(shoppingListId));
+		Cursor shoppingListCursor = controller
+				.getAllNameAndQuantityCursor(shoppingListId);
+		listViewAdapter = new ItemViewAdapter(this, R.layout.shop,
+				shoppingListCursor, new String[] {}, new int[] {});
+		setListAdapter(listViewAdapter);
+	}
 
 	private String getUncheckedListsMessage() {
 		String itemsInMessage = "";
 		boolean anItemIsNeeded = false;
-		Iterator<ShoppingItem> it = shoppingListItems.iterator();
-		while(it.hasNext()){
+		Iterator<ShoppingItem> it = shoppingItems.iterator();
+		while (it.hasNext()) {
 			ShoppingItem currentItem = it.next();
-			if(!currentItem.isBought())
-			{
-				itemsInMessage += "\n"+currentItem.getName()+getTab(currentItem.getName())+currentItem.getQuantity();
+			if (!currentItem.isBought()) {
+				itemsInMessage += "\n" + currentItem.getName()
+						+ getTab(currentItem.getName())
+						+ currentItem.getQuantity();
 				anItemIsNeeded = true;
 			}
 		}
 		String message = "List Item\t\t\t\t\tQuantity";
-		return (anItemIsNeeded)?message+itemsInMessage:null;
+		return (anItemIsNeeded) ? message + itemsInMessage : null;
 	}
 
 	private String getTab(String str) {
-		if(str.length() < 3)
+		if (str.length() < 2)
+			return "\t\t\t\t\t\t\t\t\t\t\t\t";
+		else if (str.length() < 3)
 			return "\t\t\t\t\t\t\t\t\t\t\t";
-		else if(str.length() < 5)
+		else if (str.length() < 4)
 			return "\t\t\t\t\t\t\t\t\t\t";
-		else if(str.length() < 7)
+		else if (str.length() < 5)
+			return "\t\t\t\t\t\t\t\t\t\t";
+		else if (str.length() < 6)
 			return "\t\t\t\t\t\t\t\t\t";
-		else if(str.length() < 9)
+		else if (str.length() < 7)
 			return "\t\t\t\t\t\t\t\t";
-		else if(str.length() < 11)
-			return "\t\t\t\t\t\t\t";
-		else if(str.length() < 13)
+		else if (str.length() < 8)
+			return "\t\t\t\t\t\t\t\t";
+		else if (str.length() < 9)
+			return "\t\t\t\t\t\t";
+		else if (str.length() < 10)
 			return "\t\t\t\t\t";
-		else if(str.length() < 15)
-			return "\t\t\t\t";
-		else if(str.length() < 17)
+		else if (str.length() < 11)
+			return "\t\t\t";
+		else if (str.length() < 12)
 			return "\t\t\t";
 		else
 			return "\t\t";
 	}
-
 
 	/**
 	 * The AlertDialog that will be shown on the screen is created and shown.
@@ -132,13 +163,14 @@ public class Shop extends ListActivity {
 		// as its event listener.
 		alertDialogBuilder.setPositiveButton(buttonText, buttonOkListener);
 		String cancelButtonText = getString(R.string.cancel);
-		alertDialogBuilder.setNegativeButton(cancelButtonText, new AlertDialog.OnClickListener(){
+		alertDialogBuilder.setNegativeButton(cancelButtonText,
+				new AlertDialog.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			}
-			
-		});
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+
+				});
 
 		// set the cancel listener of the AlertDialog
 		// Cancel is when the user pressed the back key in his/her phone.
@@ -155,69 +187,57 @@ public class Shop extends ListActivity {
 	} // End of showAlertDialog
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		shoppingListId = getIntent().getIntExtra(
-				ShoppingListApp.SHOPPING_LIST_ID, -1);
-		if (shoppingListId < 0)
-			throw new Error("No shopping list item selected.");
-
-		shoppingListNameTextView.setText(controller
-				.getShoppingListNameById(shoppingListId));
-		shoppingListCursor = controller
-				.getAllNameAndQuantityCursor(shoppingListId);
-		listViewAdapter = new ItemViewAdapter(this, R.layout.shop, shoppingListCursor, new String[] {}, new int[] {});
-		setListAdapter(listViewAdapter);
-	}
-
-
-	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		shoppingListCursor.close();
+		controller.closeCursor();
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.shop, menu);
 		return true;
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 	}
-	
-	private class ShoppingItem extends LinearLayout
-	{
-		
+
+	private class ShoppingItem extends LinearLayout {
+
 		private boolean bought;
 		private int quantity;
 		private String name;
 
-		public ShoppingItem(Context context, String name, int quantity) 
-		{
+		public ShoppingItem(Context context, String name, int quantity) {
 			super(context);
 			setBought(false);
 			this.setName(name);
 			this.setQuantity(quantity);
 			this.setOrientation(HORIZONTAL);
 			TextView itemNameTextView = new TextView(context);
-			itemNameTextView.setWidth((int)context.getResources().getDimension(R.dimen.itemSize));
-			itemNameTextView.setTextSize(((int)context.getResources().getDimension(R.dimen.show_text_size)));
-			itemNameTextView.setPadding(((int)context.getResources().getDimension(R.dimen.default_padding)), 0, 0, 0);
+			itemNameTextView.setWidth((int) context.getResources()
+					.getDimension(R.dimen.itemSize));
+			itemNameTextView.setTextSize(((int) context.getResources()
+					.getDimension(R.dimen.show_text_size)));
+			itemNameTextView.setPadding(((int) context.getResources()
+					.getDimension(R.dimen.default_padding)), 0, 0, 0);
 			itemNameTextView.setText(name);
-			
+
 			TextView itemQuantityTextView = new TextView(context);
 			itemQuantityTextView.setText(Integer.toString(quantity));
-			itemQuantityTextView.setTextSize(((int)context.getResources().getDimension(R.dimen.show_text_size)));
-			itemQuantityTextView.setWidth((int)context.getResources().getDimension(R.dimen.quantity_width));
-			
+			itemQuantityTextView.setTextSize(((int) context.getResources()
+					.getDimension(R.dimen.show_text_size)));
+			itemQuantityTextView.setWidth((int) context.getResources()
+					.getDimension(R.dimen.quantity_width));
+
 			CheckBox checkBox = new CheckBox(context);
 			checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				
+
 				@Override
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					setBought((isChecked)?true:false);
+				public void onCheckedChanged(CompoundButton buttonView,
+						boolean isChecked) {
+					setBought((isChecked) ? true : false);
 				}
 			});
 			this.addView(itemNameTextView);
@@ -248,22 +268,25 @@ public class Shop extends ListActivity {
 		public void setName(String name) {
 			this.name = name;
 		}
-		
-		
+
 	}
-	
-	private class ItemViewAdapter extends SimpleCursorAdapter{
+
+	private class ItemViewAdapter extends SimpleCursorAdapter {
 		public ItemViewAdapter(Context context, int layout, Cursor c,
 				String[] from, int[] to) {
 			super(context, layout, c, from, to);
 		}
+
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			String name = cursor.getString(cursor.getColumnIndex(Controller.ITEM_NAME));
-			int quantity = cursor.getInt(cursor.getColumnIndex(Controller.ITEM_QUANTITY));
+			String name = cursor.getString(cursor
+					.getColumnIndex(Controller.ITEM_NAME));
+			int quantity = cursor.getInt(cursor
+					.getColumnIndex(Controller.ITEM_QUANTITY));
 			ShoppingItem item = new ShoppingItem(context, name, quantity);
-			shoppingListItems.add(item);
-			item.setTag(cursor.getString(cursor.getColumnIndex(Controller.ITEM_ID)));
+			shoppingItems.add(item);
+			item.setTag(cursor.getString(cursor
+					.getColumnIndex(Controller.ITEM_ID)));
 			return item;
 		}
 	}
