@@ -158,7 +158,7 @@ public class Controller {
 						Integer.parseInt(tempItem.get(2)));
 			} // End of allValues while
 
-			showAllItems(); // Show all database items in the console.
+//			showAllItems(); // Show all database items in the console.
 			return true; // Return a positive result of the creation.
 		}
 		return false; // Return a negative result of the creation.
@@ -244,6 +244,7 @@ public class Controller {
 						.getColumnIndex(SHOPPING_LIST_ID)));
 				tempCursor.moveToNext(); // Move to the next cursor.
 			} // End of !tempCursor.isAfterLast() While
+		tempCursor.close();
 		dbHelper.close(); // Close the database
 		return id; // Return the value taken. -1 if no such Shopping list
 					// exists.
@@ -272,6 +273,7 @@ public class Controller {
 						.getColumnIndex(SHOPPING_LIST_NAME));
 				tempCursor.moveToNext(); // Move to the next cursor.
 			} // End of !tempCursor.isAfterLast() While
+		tempCursor.close();
 		dbHelper.close(); // Close the database
 		return value; // Return the shopping list name that has the same as the
 						// id passed.
@@ -308,7 +310,7 @@ public class Controller {
 				SHOPPING_LIST_ID + "=" + id, null);
 		dbHelper.close(); // Close the database.
 
-		showAllItems(); // Show all database items in the console.
+//		showAllItems(); // Show all database items in the console.
 	} // End of deleteAllShoppingListItemsByShoppingListId Method
 
 	/**

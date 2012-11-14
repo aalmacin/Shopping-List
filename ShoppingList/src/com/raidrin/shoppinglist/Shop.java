@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -33,19 +32,25 @@ import android.widget.TextView;
  *         <p>
  *         <b>Description: </b>Shop is a ListActivity that shows all the Items
  *         in a shopping list and is to be checked while the user is shopping.
+ *         If the user didn't checked specific items, then show an AlertDialog
+ *         with all the items still needed.
  *         </p>
  * 
  */
 public class Shop extends ListActivity {
 
-	private int shoppingListId;	// The id of the shopping list
-	private Button doneButton; // The button that the user clicks when the shopping is done.	
-	private TextView shoppingListNameTextView; // The TextView that shows the name of the shopping list	
-	private ItemViewAdapter listViewAdapter; // The adapter that is used to draw the views with the db values.	
-	private Controller controller; // An instance of the controller that is used to grab and add data to the database.	
-	private ArrayList<ShoppingItem> shoppingItems; // All the ShoppingItem are stored in an ArrayList
-	private Context context;
-	private boolean allShown;
+	private int shoppingListId; // The id of the shopping list
+	private Button doneButton; // The button that the user clicks when the
+								// shopping is done.
+	private TextView shoppingListNameTextView; // The TextView that shows the
+												// name of the shopping list
+	private ItemViewAdapter listViewAdapter; // The adapter that is used to draw
+												// the views with the db values.
+	private Controller controller; // An instance of the controller that is used
+									// to grab and add data to the database.
+	private ArrayList<ShoppingItem> shoppingItems; // All the ShoppingItem are
+													// stored in an ArrayList
+	private Context context; // The context of this activity
 	private ListView listView;
 
 	/**
@@ -60,11 +65,10 @@ public class Shop extends ListActivity {
 		// In order for this override to be valid. A call to the super method
 		// must be done.
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.shop);  // Set the content view to
+		setContentView(R.layout.shop); // Set the content view to
 										// shop. File:
 										// shop.xml
 		controller = new Controller(this);
-		allShown = false;
 		shoppingItems = new ArrayList<ShoppingItem>();
 		shoppingListNameTextView = (TextView) findViewById(R.id.shoppingListNameTextView);
 		listView = (ListView) findViewById(android.R.id.list);
@@ -83,12 +87,12 @@ public class Shop extends ListActivity {
 								}
 							});
 				} else
-				finish();
+					finish();
 			}
 		});
-		
+
 		context = this;
-		
+
 		shoppingListId = getIntent().getIntExtra(
 				ShoppingListApp.SHOPPING_LIST_ID, -1);
 		if (shoppingListId < 0)
@@ -96,38 +100,35 @@ public class Shop extends ListActivity {
 
 		shoppingListNameTextView.setText(controller
 				.getShoppingListNameById(shoppingListId));
-		
-		ArrayList<ArrayList<String>> allItems = controller.getAllNameAndQuantityValues(shoppingListId);
-		for(int i=0;i<allItems.size();i++)
-		{
-			shoppingItems.add(new ShoppingItem(context, allItems.get(i).get(0), Integer.parseInt(allItems.get(i).get(1))));			
+
+		ArrayList<ArrayList<String>> allItems = controller
+				.getAllNameAndQuantityValues(shoppingListId);
+		for (int i = 0; i < allItems.size(); i++) {
+			shoppingItems.add(new ShoppingItem(context, allItems.get(i).get(0),
+					Integer.parseInt(allItems.get(i).get(1))));
 		}
-		
-		listViewAdapter = new ItemViewAdapter(context, R.layout.shop, R.id.shoppingListEditText, allItems);
-		
+
+		listViewAdapter = new ItemViewAdapter(context, R.layout.shop,
+				R.id.shoppingListEditText, allItems);
+
 		setListAdapter(listViewAdapter);
 	}
 
 	private String getUncheckedListsMessage() {
-		if(!allShown)
-		{
-			String itemsInMessage = "";
-			boolean anItemIsNeeded = false;
-			Iterator<ShoppingItem> it = shoppingItems.iterator();
-			while (it.hasNext()) {
-				ShoppingItem currentItem = it.next();
-				if (!currentItem.isBought()) {
-					itemsInMessage += "\n" + currentItem.getName()
-							+ getTab(currentItem.getName())
-							+ currentItem.getQuantity();
-					anItemIsNeeded = true;
-				}
+		String itemsInMessage = "";
+		boolean anItemIsNeeded = false;
+		Iterator<ShoppingItem> it = shoppingItems.iterator();
+		while (it.hasNext()) {
+			ShoppingItem currentItem = it.next();
+			if (!currentItem.isBought()) {
+				itemsInMessage += "\n" + currentItem.getName()
+						+ getTab(currentItem.getName())
+						+ currentItem.getQuantity();
+				anItemIsNeeded = true;
 			}
-			String message = "List Item\t\t\t\t\tQuantity";
-			allShown = true;
-			return (anItemIsNeeded) ? message + itemsInMessage : null;
 		}
-		return null;
+		String message = "List Item\t\t\t\t\tQuantity";
+		return (anItemIsNeeded) ? message + itemsInMessage : null;
 	}
 
 	private String getTab(String str) {
@@ -194,14 +195,14 @@ public class Shop extends ListActivity {
 
 		// set the cancel listener of the AlertDialog
 		// Cancel is when the user pressed the back key in his/her phone.
-		 alertDialogBuilder.setOnCancelListener(new
-		 DialogInterface.OnCancelListener()
-		 {
-		 // The onCancel method is called when the back key is pressed.
-		 @Override
-		 public void onCancel(DialogInterface dialog) {
-		 } // End of onCancel method
-		 }); // End of OnCancelListener
+		alertDialogBuilder
+				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					// The onCancel method is called when the back key is
+					// pressed.
+					@Override
+					public void onCancel(DialogInterface dialog) {
+					} // End of onCancel method
+				}); // End of OnCancelListener
 		// Create the AlertDialog and show it on the screen
 		alertDialogBuilder.create().show();
 	} // End of showAlertDialog
@@ -284,10 +285,7 @@ public class Shop extends ListActivity {
 
 	}
 
-
 	private class ItemViewAdapter extends ArrayAdapter<ArrayList<String>> {
-
-
 
 		public ItemViewAdapter(Context context, int resource,
 				int textViewResourceId, List<ArrayList<String>> items) {
