@@ -292,16 +292,6 @@ public class Controller {
 	} // End of shoppingListIsUnique method
 
 	/**
-	 * Take the cursor that is used to grab all the shopping lists.
-	 * 
-	 * @return The cursor returned by the select query.
-	 */
-	public Cursor takeShoppingListCursor() {
-		return new DBAdapter().openToRead().query(SHOPPING_LIST_TABLE, null,
-				null, null, null, null, null);
-	} // End of takeShoppingListCursor
-
-	/**
 	 * Delete all the shopping list and shopping list items where shoppingid
 	 * matches the shopping list.
 	 * 
@@ -446,6 +436,38 @@ public class Controller {
 	} // End of fillUpShoppingItems method
 
 	/**
+	 * Gets all the shopping lists that the app currently have.
+	 */
+	public ArrayList<ArrayList<String>> getAllShoppingLists(){
+		ArrayList<ArrayList<String>> allLists = new ArrayList<ArrayList<String>>();
+		// Open the database and take the values and quantity into a tempCursor.
+		DBAdapter dbHelper = new DBAdapter();
+		Cursor tempCursor = dbHelper.openToRead().query(SHOPPING_LIST_TABLE,
+				new String[] {SHOPPING_LIST_ID, SHOPPING_LIST_NAME},
+				null, null, null,
+				null, null);
+		if (tempCursor.moveToFirst())
+			// Go through each item in the cursor and add the values into the
+			// allItems variable.
+			while (!tempCursor.isAfterLast()) {
+				ArrayList<String> tempArrayList = new ArrayList<String>();
+				// Take the shopping list name and id.
+				tempArrayList.add(tempCursor.getString(tempCursor
+						.getColumnIndex(SHOPPING_LIST_ID)));
+				tempArrayList.add(tempCursor.getString(tempCursor
+						.getColumnIndex(SHOPPING_LIST_NAME)));
+				allLists.add(tempArrayList); // Add the tempArrayList to the
+												// allValues ArrayList
+				tempCursor.moveToNext(); // Move to the next item
+			} // End of !tempCursor.isAfterLast() While
+		else
+			allLists = null;		
+		tempCursor.close();
+		dbHelper.close();
+		return allLists;
+	} // End of getAllShoppingLists Method
+	
+	/**
 	 * Get all the name and quantity values of all the shopping list items with
 	 * the same id as the one passed.
 	 * 
@@ -483,34 +505,6 @@ public class Controller {
 		dbHelper.close(); // Close the database
 		return allValues; // Return all the values from the database
 	} // End of getAllNameAndQuantityValues Method
-
-	private SQLiteDatabase db; // A reference to the database.
-	private Cursor cursor; // A reference to a cursor returned.
-	/**
-	 * Get the cursor that has the name and quantity of each shopping list item.
-	 * 
-	 * @param shoppingListId
-	 *            The id of the shopping list.
-	 * @return The cursor that contains all the values of each shopping list
-	 *         item.
-	 */
-	public Cursor getAllNameAndQuantityCursor(int shoppingListId) {
-		db = new DBAdapter().openToRead();
-		cursor = db.query(ITEMS_TABLE,
-					new String[] { ITEM_ID, ITEM_NAME, ITEM_QUANTITY },
-					ITEM_SHOPPING_LIST_ID + " = " + shoppingListId, null, null,
-					null, null);
-		return cursor;
-	} // End of getAllNameAndQuantityCursor Method
-
-	/**
-	 * Closes the cursor of the DB that is not closed.
-	 */
-	public void closeCursor()
-	{
-		cursor.close();
-		db.close();
-	} // End of closeCursor
 	
 	/**
 	 * Check if a shopping list exist in the database.

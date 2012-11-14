@@ -10,7 +10,6 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.SimpleCursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -46,6 +45,8 @@ public class Shop extends ListActivity {
 	private Controller controller; // An instance of the controller that is used to grab and add data to the database.	
 	private ArrayList<ShoppingItem> shoppingItems; // All the ShoppingItem are stored in an ArrayList
 	private Context context;
+	private boolean allShown;
+	private ListView listView;
 
 	/**
 	 * When the application starts/created, onCreate method is executed.
@@ -63,8 +64,11 @@ public class Shop extends ListActivity {
 										// shop. File:
 										// shop.xml
 		controller = new Controller(this);
+		allShown = false;
 		shoppingItems = new ArrayList<ShoppingItem>();
 		shoppingListNameTextView = (TextView) findViewById(R.id.shoppingListNameTextView);
+		listView = (ListView) findViewById(android.R.id.list);
+
 		doneButton = (Button) findViewById(R.id.done_button);
 		doneButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -79,7 +83,7 @@ public class Shop extends ListActivity {
 								}
 							});
 				} else
-					finish();
+				finish();
 			}
 		});
 		
@@ -92,29 +96,38 @@ public class Shop extends ListActivity {
 
 		shoppingListNameTextView.setText(controller
 				.getShoppingListNameById(shoppingListId));
-		Cursor shoppingListCursor = controller
-				.getAllNameAndQuantityCursor(shoppingListId);
-		listViewAdapter = new ItemViewAdapter(context, R.layout.shop, R.id.shoppingListEditText, controller.getAllNameAndQuantityValues(shoppingListId));
-//		listViewAdapter = new ItemViewAdapter(this, R.layout.shop,
-//				shoppingListCursor, new String[] {}, new int[] {});
+		
+		ArrayList<ArrayList<String>> allItems = controller.getAllNameAndQuantityValues(shoppingListId);
+		for(int i=0;i<allItems.size();i++)
+		{
+			shoppingItems.add(new ShoppingItem(context, allItems.get(i).get(0), Integer.parseInt(allItems.get(i).get(1))));			
+		}
+		
+		listViewAdapter = new ItemViewAdapter(context, R.layout.shop, R.id.shoppingListEditText, allItems);
+		
 		setListAdapter(listViewAdapter);
 	}
 
 	private String getUncheckedListsMessage() {
-		String itemsInMessage = "";
-		boolean anItemIsNeeded = false;
-		Iterator<ShoppingItem> it = shoppingItems.iterator();
-		while (it.hasNext()) {
-			ShoppingItem currentItem = it.next();
-			if (!currentItem.isBought()) {
-				itemsInMessage += "\n" + currentItem.getName()
-						+ getTab(currentItem.getName())
-						+ currentItem.getQuantity();
-				anItemIsNeeded = true;
+		if(!allShown)
+		{
+			String itemsInMessage = "";
+			boolean anItemIsNeeded = false;
+			Iterator<ShoppingItem> it = shoppingItems.iterator();
+			while (it.hasNext()) {
+				ShoppingItem currentItem = it.next();
+				if (!currentItem.isBought()) {
+					itemsInMessage += "\n" + currentItem.getName()
+							+ getTab(currentItem.getName())
+							+ currentItem.getQuantity();
+					anItemIsNeeded = true;
+				}
 			}
+			String message = "List Item\t\t\t\t\tQuantity";
+			allShown = true;
+			return (anItemIsNeeded) ? message + itemsInMessage : null;
 		}
-		String message = "List Item\t\t\t\t\tQuantity";
-		return (anItemIsNeeded) ? message + itemsInMessage : null;
+		return null;
 	}
 
 	private String getTab(String str) {
@@ -133,15 +146,15 @@ public class Shop extends ListActivity {
 		else if (str.length() < 8)
 			return "\t\t\t\t\t\t\t\t";
 		else if (str.length() < 9)
-			return "\t\t\t\t\t\t";
+			return "\t\t\t\t\t\t\t";
 		else if (str.length() < 10)
 			return "\t\t\t\t\t";
 		else if (str.length() < 11)
-			return "\t\t\t";
+			return "\t\t\t\t\t";
 		else if (str.length() < 12)
-			return "\t\t\t";
+			return "\t\t\t\t";
 		else
-			return "\t\t";
+			return "\t\t\t";
 	}
 
 	/**
@@ -181,24 +194,17 @@ public class Shop extends ListActivity {
 
 		// set the cancel listener of the AlertDialog
 		// Cancel is when the user pressed the back key in his/her phone.
-		// alertDialogBuilder.setOnCancelListener(new
-		// DialogInterface.OnCancelListener()
-		// {
-		// // The onCancel method is called when the back key is pressed.
-		// @Override
-		// public void onCancel(DialogInterface dialog) {
-		// } // End of onCancel method
-		// }); // End of OnCancelListener
+		 alertDialogBuilder.setOnCancelListener(new
+		 DialogInterface.OnCancelListener()
+		 {
+		 // The onCancel method is called when the back key is pressed.
+		 @Override
+		 public void onCancel(DialogInterface dialog) {
+		 } // End of onCancel method
+		 }); // End of OnCancelListener
 		// Create the AlertDialog and show it on the screen
 		alertDialogBuilder.create().show();
 	} // End of showAlertDialog
-
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		controller.closeCursor();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -282,38 +288,15 @@ public class Shop extends ListActivity {
 	private class ItemViewAdapter extends ArrayAdapter<ArrayList<String>> {
 
 
-		private List<ArrayList<String>> allItems;
 
 		public ItemViewAdapter(Context context, int resource,
 				int textViewResourceId, List<ArrayList<String>> items) {
 			super(context, resource, textViewResourceId, items);
-			allItems = items;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ShoppingItem item = new ShoppingItem(context, allItems.get(position).get(0), Integer.parseInt(allItems.get(position).get(1)));
-			return item;
+			return shoppingItems.get(position);
 		}
 	}
-	
-//	private class ItemView2Adapter extends SimpleCursorAdapter {
-//		public ItemViewAdapter(Context context, int layout, Cursor c,
-//				String[] from, int[] to) {
-//			super(context, layout, c, from, to);
-//		}
-//
-//		@Override
-//		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-//			String name = cursor.getString(cursor
-//					.getColumnIndex(Controller.ITEM_NAME));
-//			int quantity = cursor.getInt(cursor
-//					.getColumnIndex(Controller.ITEM_QUANTITY));
-//			ShoppingItem item = new ShoppingItem(context, name, quantity);
-//			shoppingItems.add(item);
-//			item.setTag(cursor.getString(cursor
-//					.getColumnIndex(Controller.ITEM_ID)));
-//			return item;
-//		}
-//	}
 }

@@ -1,13 +1,18 @@
 package com.raidrin.shoppinglist;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -35,9 +40,10 @@ public class ShoppingListApp extends ListActivity {
 	private Context context;
 	private Controller controller;
 	private int selectedItem;
-	private Cursor allShoppingListsCursor;
+//	private Cursor allShoppingListsCursor;
 	private TextView addShoppingListTextView;
-	private SimpleCursorAdapterExtension listViewAdapter;
+	private ItemViewAdapter listViewAdapter;
+	private ListView listView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,7 @@ public class ShoppingListApp extends ListActivity {
 		setContentView(R.layout.main);
 
 		addShoppingListImageButton = (ImageButton) findViewById(R.id.addShoppingListImageButton);
+		listView = (ListView)findViewById(android.R.id.list);
 		addShoppingListImageButton.setOnClickListener(addShoppingListListener);
 		addShoppingListTextView = (TextView)findViewById(R.id.addShoppingListTextView);
 
@@ -73,13 +80,13 @@ public class ShoppingListApp extends ListActivity {
 		{
 			addShoppingListTextView.setVisibility(View.INVISIBLE);
 		}
-		allShoppingListsCursor = controller.takeShoppingListCursor();
-		listViewAdapter = new SimpleCursorAdapterExtension(this,
-				R.layout.shoppinglists_row,
-				allShoppingListsCursor ,
-				new String[] { Controller.SHOPPING_LIST_NAME },
-				new int[] { R.id.textView1 });
-		setListAdapter(listViewAdapter);
+
+		ArrayList<ArrayList<String>> allTables = controller.getAllShoppingLists();
+		if(allTables != null)
+		{
+			listViewAdapter = new ItemViewAdapter(context,-1,-1,allTables);
+			setListAdapter(listViewAdapter);
+		}
 	}
 	
 	@Override
@@ -90,7 +97,6 @@ public class ShoppingListApp extends ListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		allShoppingListsCursor.close();
 	}
 
 	@Override
@@ -155,13 +161,11 @@ public class ShoppingListApp extends ListActivity {
 		case SHOP_ID:
 			shopIntent.putExtra(SHOPPING_LIST_ID, selectedItem);
 			startActivity(shopIntent);
-			allShoppingListsCursor.close();
 			return true;
 		case MODIFY_ID:
 			addModifyIntent.putExtra(CREATE_MODIFY, MODIFY_REQUEST);
 			addModifyIntent.putExtra(SHOPPING_LIST_ID, selectedItem);
 	        startActivity(addModifyIntent);
-			allShoppingListsCursor.close();
 			return true;
 		case DELETE_ID:
 			showAlertDialog(getString(R.string.delete), getString(R.string.delete_verify)+" "+controller.getShoppingListNameById(selectedItem)+"?", getString(R.string.delete),
@@ -170,27 +174,30 @@ public class ShoppingListApp extends ListActivity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							controller.deleteAllShoppingListAndItemsByShoppingListId(selectedItem);
-							listViewAdapter.notifyDataSetChanged();
-							allShoppingListsCursor.close();
-							onResume();
 						}
 					});
+			onResume();
 			return true;
 		}
 		return super.onContextItemSelected(item);
 	}
 
-	private class SimpleCursorAdapterExtension extends SimpleCursorAdapter {
+	private class ItemViewAdapter extends ArrayAdapter<ArrayList<String>> {
 
-		public SimpleCursorAdapterExtension(Context context, int layout,
-				Cursor c, String[] from, int[] to) {
-			super(context, layout, c, from, to);
+		private List<ArrayList<String>> allItems;
+
+		public ItemViewAdapter(Context context, int resource,
+				int textViewResourceId, List<ArrayList<String>> items) {
+			super(context, resource, textViewResourceId, items);
+			allItems = items;
 		}
-
+		
 		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			super.bindView(view, context, cursor);
-			view.setTag(cursor.getString(cursor.getColumnIndex(Controller.SHOPPING_LIST_ID)));
+		public View getView(int position, View convertView, ViewGroup parent) {
+			TextView item = new TextView(context);
+			item.setTag(allItems.get(position).get(0));
+			item.setText(allItems.get(position).get(1));
+			return item;
 		}
 	}
 
