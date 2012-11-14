@@ -2,6 +2,8 @@ package com.raidrin.shoppinglist;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -39,9 +42,10 @@ public class Shop extends ListActivity {
 	private int shoppingListId;	// The id of the shopping list
 	private Button doneButton; // The button that the user clicks when the shopping is done.	
 	private TextView shoppingListNameTextView; // The TextView that shows the name of the shopping list	
-	private SimpleCursorAdapter listViewAdapter; // The adapter that is used to draw the views with the db values.	
+	private ItemViewAdapter listViewAdapter; // The adapter that is used to draw the views with the db values.	
 	private Controller controller; // An instance of the controller that is used to grab and add data to the database.	
 	private ArrayList<ShoppingItem> shoppingItems; // All the ShoppingItem are stored in an ArrayList
+	private Context context;
 
 	/**
 	 * When the application starts/created, onCreate method is executed.
@@ -78,7 +82,9 @@ public class Shop extends ListActivity {
 					finish();
 			}
 		});
-
+		
+		context = this;
+		
 		shoppingListId = getIntent().getIntExtra(
 				ShoppingListApp.SHOPPING_LIST_ID, -1);
 		if (shoppingListId < 0)
@@ -88,8 +94,9 @@ public class Shop extends ListActivity {
 				.getShoppingListNameById(shoppingListId));
 		Cursor shoppingListCursor = controller
 				.getAllNameAndQuantityCursor(shoppingListId);
-		listViewAdapter = new ItemViewAdapter(this, R.layout.shop,
-				shoppingListCursor, new String[] {}, new int[] {});
+		listViewAdapter = new ItemViewAdapter(context, R.layout.shop, R.id.shoppingListEditText, controller.getAllNameAndQuantityValues(shoppingListId));
+//		listViewAdapter = new ItemViewAdapter(this, R.layout.shop,
+//				shoppingListCursor, new String[] {}, new int[] {});
 		setListAdapter(listViewAdapter);
 	}
 
@@ -271,23 +278,42 @@ public class Shop extends ListActivity {
 
 	}
 
-	private class ItemViewAdapter extends SimpleCursorAdapter {
-		public ItemViewAdapter(Context context, int layout, Cursor c,
-				String[] from, int[] to) {
-			super(context, layout, c, from, to);
+
+	private class ItemViewAdapter extends ArrayAdapter<ArrayList<String>> {
+
+
+		private List<ArrayList<String>> allItems;
+
+		public ItemViewAdapter(Context context, int resource,
+				int textViewResourceId, List<ArrayList<String>> items) {
+			super(context, resource, textViewResourceId, items);
+			allItems = items;
 		}
 
 		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			String name = cursor.getString(cursor
-					.getColumnIndex(Controller.ITEM_NAME));
-			int quantity = cursor.getInt(cursor
-					.getColumnIndex(Controller.ITEM_QUANTITY));
-			ShoppingItem item = new ShoppingItem(context, name, quantity);
-			shoppingItems.add(item);
-			item.setTag(cursor.getString(cursor
-					.getColumnIndex(Controller.ITEM_ID)));
+		public View getView(int position, View convertView, ViewGroup parent) {
+			ShoppingItem item = new ShoppingItem(context, allItems.get(position).get(0), Integer.parseInt(allItems.get(position).get(1)));
 			return item;
 		}
 	}
+	
+//	private class ItemView2Adapter extends SimpleCursorAdapter {
+//		public ItemViewAdapter(Context context, int layout, Cursor c,
+//				String[] from, int[] to) {
+//			super(context, layout, c, from, to);
+//		}
+//
+//		@Override
+//		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+//			String name = cursor.getString(cursor
+//					.getColumnIndex(Controller.ITEM_NAME));
+//			int quantity = cursor.getInt(cursor
+//					.getColumnIndex(Controller.ITEM_QUANTITY));
+//			ShoppingItem item = new ShoppingItem(context, name, quantity);
+//			shoppingItems.add(item);
+//			item.setTag(cursor.getString(cursor
+//					.getColumnIndex(Controller.ITEM_ID)));
+//			return item;
+//		}
+//	}
 }
