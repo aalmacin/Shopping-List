@@ -1,6 +1,7 @@
 package com.raidrin.shoppinglist;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.os.Bundle;
@@ -15,14 +16,12 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 
 public class ShoppingListApp extends ListActivity {
 
@@ -40,23 +39,24 @@ public class ShoppingListApp extends ListActivity {
 	private Context context;
 	private Controller controller;
 	private int selectedItem;
-//	private Cursor allShoppingListsCursor;
 	private TextView addShoppingListTextView;
 	private ItemViewAdapter listViewAdapter;
 	private ListView listView;
+	private ArrayList<TextView> allTextViews;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		allTextViews = new ArrayList<TextView>();
 		addShoppingListImageButton = (ImageButton) findViewById(R.id.addShoppingListImageButton);
 		listView = (ListView)findViewById(android.R.id.list);
 		addShoppingListImageButton.setOnClickListener(addShoppingListListener);
 		addShoppingListTextView = (TextView)findViewById(R.id.addShoppingListTextView);
 
 		context = this;
-
+		
 		controller = new Controller(context);
 		addModifyIntent = new Intent(context, AddModify.class);
 		shopIntent = new Intent(this,Shop.class);
@@ -66,7 +66,6 @@ public class ShoppingListApp extends ListActivity {
 		public void onClick(android.view.View v) {
 			addModifyIntent.putExtra(CREATE_MODIFY, CREATE_REQUEST);
 	        startActivity(addModifyIntent);
-			onPause();
 		};
 	};
 
@@ -81,9 +80,9 @@ public class ShoppingListApp extends ListActivity {
 			addShoppingListTextView.setVisibility(View.INVISIBLE);
 		}
 
+		listViewAdapter = null;
 		ArrayList<ArrayList<String>> allTables = controller.getAllShoppingLists();
-		if(allTables != null)
-		{
+		if(allTables != null) {
 			listViewAdapter = new ItemViewAdapter(context,-1,-1,allTables);
 			setListAdapter(listViewAdapter);
 		}
@@ -92,11 +91,6 @@ public class ShoppingListApp extends ListActivity {
 	@Override
 	public void onBackPressed() {
 		finish();
-	}
-	
-	@Override
-	protected void onPause() {
-		super.onPause();
 	}
 
 	@Override
@@ -174,12 +168,24 @@ public class ShoppingListApp extends ListActivity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							controller.deleteAllShoppingListAndItemsByShoppingListId(selectedItem);
+							deleteAView(selectedItem);
+							onResume();
 						}
 					});
-			onResume();
 			return true;
 		}
 		return super.onContextItemSelected(item);
+	}
+
+	private void deleteAView(int tag) {
+		Iterator<TextView> it = allTextViews.iterator();
+		while(it.hasNext()){
+			TextView currTextView = it.next();
+			if(Integer.toString(tag).equals(currTextView.getTag()))
+			{
+				it.remove();
+			}
+		}
 	}
 
 	private class ItemViewAdapter extends ArrayAdapter<ArrayList<String>> {
@@ -194,9 +200,15 @@ public class ShoppingListApp extends ListActivity {
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView item = new TextView(context);
-			item.setTag(allItems.get(position).get(0));
-			item.setText(allItems.get(position).get(1));
+			TextView item = (TextView)convertView;
+			if(convertView == null)
+			{
+				Log.d("Debug", "Convert view is null");
+				item = new TextView(context);
+				item.setTag(allItems.get(position).get(0));
+				item.setText(allItems.get(position).get(1));
+				allTextViews.add(item);
+			}
 			return item;
 		}
 	}
