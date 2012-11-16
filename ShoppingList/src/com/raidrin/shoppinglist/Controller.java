@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-
 /**
  * FileName: Controller.java
  * 
@@ -158,7 +157,7 @@ public class Controller {
 						Integer.parseInt(tempItem.get(2)));
 			} // End of allValues while
 
-//			showAllItems(); // Show all database items in the console.
+			// showAllItems(); // Show all database items in the console.
 			return true; // Return a positive result of the creation.
 		}
 		return false; // Return a negative result of the creation.
@@ -310,7 +309,7 @@ public class Controller {
 				SHOPPING_LIST_ID + "=" + id, null);
 		dbHelper.close(); // Close the database.
 
-//		showAllItems(); // Show all database items in the console.
+		// showAllItems(); // Show all database items in the console.
 	} // End of deleteAllShoppingListItemsByShoppingListId Method
 
 	/**
@@ -440,14 +439,13 @@ public class Controller {
 	/**
 	 * Gets all the shopping lists that the app currently have.
 	 */
-	public ArrayList<ArrayList<String>> getAllShoppingLists(){
+	public ArrayList<ArrayList<String>> getAllShoppingLists() {
 		ArrayList<ArrayList<String>> allLists = new ArrayList<ArrayList<String>>();
 		// Open the database and take the values and quantity into a tempCursor.
 		DBAdapter dbHelper = new DBAdapter();
 		Cursor tempCursor = dbHelper.openToRead().query(SHOPPING_LIST_TABLE,
-				new String[] {SHOPPING_LIST_ID, SHOPPING_LIST_NAME},
-				null, null, null,
-				null, null);
+				new String[] { SHOPPING_LIST_ID, SHOPPING_LIST_NAME }, null,
+				null, null, null, null);
 		if (tempCursor.moveToFirst())
 			// Go through each item in the cursor and add the values into the
 			// allItems variable.
@@ -463,12 +461,12 @@ public class Controller {
 				tempCursor.moveToNext(); // Move to the next item
 			} // End of !tempCursor.isAfterLast() While
 		else
-			allLists = null;		
+			allLists = null;
 		tempCursor.close();
 		dbHelper.close();
 		return allLists;
 	} // End of getAllShoppingLists Method
-	
+
 	/**
 	 * Get all the name and quantity values of all the shopping list items with
 	 * the same id as the one passed.
@@ -507,7 +505,7 @@ public class Controller {
 		dbHelper.close(); // Close the database
 		return allValues; // Return all the values from the database
 	} // End of getAllNameAndQuantityValues Method
-	
+
 	/**
 	 * Check if a shopping list exist in the database.
 	 * 
@@ -602,9 +600,12 @@ public class Controller {
 			/**
 			 * The constructor of the ShoppingListSQLHelper class
 			 * 
-			 * @param context The context of the Activity using this
-			 * @param name The name of the Database
-			 * @param version The database version
+			 * @param context
+			 *            The context of the Activity using this
+			 * @param name
+			 *            The name of the Database
+			 * @param version
+			 *            The database version
 			 */
 			public ShoppingListSQLHelper(Context context, String name,
 					CursorFactory factory, int version) {
@@ -612,17 +613,20 @@ public class Controller {
 			} // End of Constructor
 
 			/**
-			 * Method that gets called when the db is getting initialized. Creates the table that the app needs.
+			 * Method that gets called when the db is getting initialized.
+			 * Creates the table that the app needs.
 			 * 
-			 * @param db The database that is to be created.
+			 * @param db
+			 *            The database that is to be created.
 			 */
 			public void onCreate(SQLiteDatabase db) {
 				db.execSQL(SHOPPING_LIST_TABLE_QUERY);
 				db.execSQL(ITEMS_TABLE_CREATE_QUERY);
 			} // End of onCreate method
-			
+
 			public void onUpgrade(SQLiteDatabase db, int oldVersion,
-					int newVersion) {}
+					int newVersion) {
+			}
 		} // End of ShoppingListSQLHelper Private Class
 	} // End of DBAdapter Private Class
 } // End of Controller Class

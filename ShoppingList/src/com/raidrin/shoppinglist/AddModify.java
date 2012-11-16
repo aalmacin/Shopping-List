@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-
 /**
  * FileName: AddModify.java
  * 
@@ -117,71 +116,83 @@ public class AddModify extends Activity {
 				// shopping list.
 				if (!createMode) {
 					// Update the table name.
-					controller
-							.updateShoppingListName(shoppingListId, shoppingListName);
-					// Delete all shopping list items. The reason for this is to make the modification simple.
-					// The data that were now in the EditTexts are the ones to be saved. 
+					controller.updateShoppingListName(shoppingListId,
+							shoppingListName);
+					// Delete all shopping list items. The reason for this is to
+					// make the modification simple.
+					// The data that were now in the EditTexts are the ones to
+					// be saved.
 					controller
 							.deleteAllShoppingListItemsByShoppingId(shoppingListId);
 				} // End of CreateMode if.
-				
-				// A flag that states whether the items are valid/invalid.
-				// Only when the user gave a valid shopping list name, item name, and quantity will this be valid.
-				boolean itemsAddedValid = false;
-				
-				// If the shoppingListEditText has a value, then create or add the items in the database
-				if (!shoppingListEditText.getText().toString().equals(""))
-					// Call the method to add items. The method returns whether the values that are added are valid/invalid.
-					// meaning the rows have at least one row. This is used to check if the Dialog should be shown.
-					itemsAddedValid = controller
-							.createOrModifyShoppingList(shoppingListName,
-									MAX_ITEMS, shoppingListTableLayout,
-									createMode);
 
-				// If the items added are valid then that means that the save is done and this activity should now close
+				// A flag that states whether the items are valid/invalid.
+				// Only when the user gave a valid shopping list name, item
+				// name, and quantity will this be valid.
+				boolean itemsAddedValid = false;
+
+				// If the shoppingListEditText has a value, then create or add
+				// the items in the database
+				if (!shoppingListEditText.getText().toString().equals(""))
+					// Call the method to add items. The method returns whether
+					// the values that are added are valid/invalid.
+					// meaning the rows have at least one row. This is used to
+					// check if the Dialog should be shown.
+					itemsAddedValid = controller.createOrModifyShoppingList(
+							shoppingListName, MAX_ITEMS,
+							shoppingListTableLayout, createMode);
+
+				// If the items added are valid then that means that the save is
+				// done and this activity should now close
 				if (itemsAddedValid)
 					finish(); // Close this activity
 				else
-					// Show the alert dialog that states the reason why the items are not saved.
-					// When the fix button is clicked, the dialog will just close.
+					// Show the alert dialog that states the reason why the
+					// items are not saved.
+					// When the fix button is clicked, the dialog will just
+					// close.
 					showAlertDialog(getString(R.string.shopping_list_error),
 							getString(R.string.you_need_at_least),
 							getString(R.string.fix),
 							new AlertDialog.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog,
-										int which) {} // End of onClick
+										int which) {
+								} // End of onClick
 							} // End of OnClickListener anonymous inner class
 					);
 			} // End of onClick
-		} // End of OnClickListener anonymous inner class  
+		} // End of OnClickListener anonymous inner class
 		);
-		
+
 		// Create the rows at runtime.
 		runtimeCreateRows();
-		
-		// Check whether the mode is create/modify and set the right text to be shown to the user.
+
+		// Check whether the mode is create/modify and set the right text to be
+		// shown to the user.
 		// Then set the mode to what the current process is.
 		switch (getIntent().getIntExtra(ShoppingListApp.CREATE_MODIFY, -1)) {
-			case ShoppingListApp.CREATE_REQUEST:
-				modifyCreateTextView.setText(getString(R.string.create_new_list));
-				createMode = true;
-				break;
-			case ShoppingListApp.MODIFY_REQUEST:
-				createMode = false;
-				fillUpForms(); // Fill up all the forms from the values that the modified form already possess.
-				modifyCreateTextView.setText(getString(R.string.modify_list));
-				break;
+		case ShoppingListApp.CREATE_REQUEST:
+			modifyCreateTextView.setText(getString(R.string.create_new_list));
+			createMode = true;
+			break;
+		case ShoppingListApp.MODIFY_REQUEST:
+			createMode = false;
+			fillUpForms(); // Fill up all the forms from the values that the
+							// modified form already possess.
+			modifyCreateTextView.setText(getString(R.string.modify_list));
+			break;
 		} // End of Switch
 	} // End of onCreate
 
-	/** 
-	 * The back button key on the phone.
-	 * Do nothing when the back button on the mobile phone is pressed.
-	 * The reason is that we want the user to use the cancel button instead to close this activity.
+	/**
+	 * The back button key on the phone. Do nothing when the back button on the
+	 * mobile phone is pressed. The reason is that we want the user to use the
+	 * cancel button instead to close this activity.
 	 */
 	@Override
-	public void onBackPressed() {}
+	public void onBackPressed() {
+	}
 
 	/**
 	 * The AlertDialog that will be shown on the screen is created and shown.
@@ -217,20 +228,23 @@ public class AddModify extends Activity {
 	 * Used to fill up the forms when items are being modified.
 	 */
 	private void fillUpForms() {
-		// Get the shoppingListId passed to this Activity when called via Intent.
+		// Get the shoppingListId passed to this Activity when called via
+		// Intent.
 		int shoppingListId = getIntent().getIntExtra(
 				ShoppingListApp.SHOPPING_LIST_ID, -1);
-		// then call the controller that fills up the shopping items in this Activity.
+		// then call the controller that fills up the shopping items in this
+		// Activity.
 		controller.fillUpShoppingItems(shoppingListId, shoppingListEditText,
 				shoppingListTableLayout);
 	} // End of fillUpForms
 
 	/**
-	 * Create the rows at runtime. These rows will contain data about each item to be added in a list.
-	 * The name of these views is ShoppingListItem. The items are added in the shoppingListTableLayout.
+	 * Create the rows at runtime. These rows will contain data about each item
+	 * to be added in a list. The name of these views is ShoppingListItem. The
+	 * items are added in the shoppingListTableLayout.
 	 */
 	private void runtimeCreateRows() {
-		for (int i = 0; i < MAX_ITEMS; i++) 
+		for (int i = 0; i < MAX_ITEMS; i++)
 			shoppingListTableLayout.addView(new ShoppingListItem(this));
 	} // End of runtimeCreateRows
 } // End of AddModify Class

@@ -68,16 +68,29 @@ public class Shop extends ListActivity {
 		setContentView(R.layout.shop); // Set the content view to
 										// shop. File:
 										// shop.xml
-		controller = new Controller(this); // The controller used for accessing data from the database.
-		shoppingItems = new ArrayList<ShoppingItem>(); // The arraylist that stores all the items
-		shoppingListNameTextView = (TextView) findViewById(R.id.shoppingListNameTextView); // The name of the current shopping list
-		listView = (ListView) findViewById(android.R.id.list); // The android list that is used by this ListActivity.
+		controller = new Controller(this); // The controller used for accessing
+											// data from the database.
+		shoppingItems = new ArrayList<ShoppingItem>(); // The arraylist that
+														// stores all the items
+		shoppingListNameTextView = (TextView) findViewById(R.id.shoppingListNameTextView); // The
+																							// name
+																							// of
+																							// the
+																							// current
+																							// shopping
+																							// list
+		listView = (ListView) findViewById(android.R.id.list); // The android
+																// list that is
+																// used by this
+																// ListActivity.
 
-		// The button that needs to be clicked when the user thinks that the shopping is done.
+		// The button that needs to be clicked when the user thinks that the
+		// shopping is done.
 		doneButton = (Button) findViewById(R.id.done_button);
 		doneButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				// Get the message from the unchecked lists. If it returns null, then all shopping items are bought
+				// Get the message from the unchecked lists. If it returns null,
+				// then all shopping items are bought
 				// Then close this activity if that's the case.
 				// Else, show an AlertDialog with the items that are not bought
 				// and give the user a choice to continue or cancel.
@@ -92,12 +105,12 @@ public class Shop extends ListActivity {
 									finish(); // Close this activity
 								} // End of onClick method
 							} // End of onClickListener method
-							);
-				}else
+					);
+				} else
 					finish(); // Close this activity
 			} // End of onClick method
 		} // End of onClickListener
-		);
+				);
 
 		// Initialize the context to this activitie's context.
 		context = this;
@@ -105,8 +118,9 @@ public class Shop extends ListActivity {
 		// get the shopping list id that is passed to this activity via intents.
 		shoppingListId = getIntent().getIntExtra(
 				ShoppingListApp.SHOPPING_LIST_ID, -1);
-		
-		// Throw an error when there is no shoppingListId as with the one passed.
+
+		// Throw an error when there is no shoppingListId as with the one
+		// passed.
 		if (shoppingListId < 0)
 			throw new Error("No shopping list item selected.");
 
@@ -114,17 +128,20 @@ public class Shop extends ListActivity {
 		shoppingListNameTextView.setText(controller
 				.getShoppingListNameById(shoppingListId));
 
-		 // Get all the name and quantity values of items from the database.
+		// Get all the name and quantity values of items from the database.
 		ArrayList<ArrayList<String>> allItems = controller
 				.getAllNameAndQuantityValues(shoppingListId);
-		// Add all the values from all the name and quantity values and pass them to the created 
-		// ShoppingList objects that will be saved on the shoppingItems ArrayList.
+		// Add all the values from all the name and quantity values and pass
+		// them to the created
+		// ShoppingList objects that will be saved on the shoppingItems
+		// ArrayList.
 		for (int i = 0; i < allItems.size(); i++) {
 			shoppingItems.add(new ShoppingItem(context, allItems.get(i).get(0),
 					Integer.parseInt(allItems.get(i).get(1))));
 		} // End of for
 
-		// Initialize the adapter and use all the items as the views to be shown in the adapter.
+		// Initialize the adapter and use all the items as the views to be shown
+		// in the adapter.
 		listViewAdapter = new ItemViewAdapter(context, R.layout.shop,
 				R.id.shoppingListEditText, allItems);
 
@@ -135,17 +152,20 @@ public class Shop extends ListActivity {
 	/**
 	 * Get the message with unchecked values.
 	 * 
-	 * @return the message that contains all the shopping list items that are not yet bought.
+	 * @return the message that contains all the shopping list items that are
+	 *         not yet bought.
 	 */
 	private String getUncheckedListsMessage() {
 		String itemsInMessage = ""; // Initially, the item has a blank value.
-		boolean anItemIsNeeded = false; // A flag that is use to identify whether an item is not checked.
-		
+		boolean anItemIsNeeded = false; // A flag that is use to identify
+										// whether an item is not checked.
+
 		// Go through each item in the shoppingItems arraylist
 		Iterator<ShoppingItem> it = shoppingItems.iterator();
 		while (it.hasNext()) {
 			ShoppingItem currentItem = it.next();
-			// If the currentItem in the shoppingList ArrayList is not bought, then add it to the message.
+			// If the currentItem in the shoppingList ArrayList is not bought,
+			// then add it to the message.
 			// And set the boolean variable to true.
 			if (!currentItem.isBought()) {
 				itemsInMessage += "\n" + currentItem.getName()
@@ -154,9 +174,10 @@ public class Shop extends ListActivity {
 				anItemIsNeeded = true;
 			} // End of If
 		} // End of while
-		// Set the title of the message.
+			// Set the title of the message.
 		String message = "List Item\t\t\t\t\tQuantity";
-		// If an item is needed, return the title concatenated with the items in message
+		// If an item is needed, return the title concatenated with the items in
+		// message
 		// Else, return a null.
 		return (anItemIsNeeded) ? message + itemsInMessage : null;
 	} // End of getUncheckedListsMessage Method
@@ -244,7 +265,8 @@ public class Shop extends ListActivity {
 
 	@Override
 	public void onBackPressed() {
-		// The back button on the user's phone is overriden in order for the user to use the done button.
+		// The back button on the user's phone is overriden in order for the
+		// user to use the done button.
 	} // End of onBackPressed method
 
 	/**
@@ -252,14 +274,16 @@ public class Shop extends ListActivity {
 	 * <b>Date: </b>November 13, 2012
 	 * </p>
 	 * <p>
-	 * <b>Description: </b>ShoppingItem is a class that extends LinearLayout which consists of a
-	 * TextView that stores the name of the shopping list item,
-	 * another TextView that stores the quantity, and a checkbox which tells whether the item is bought/not bought.
+	 * <b>Description: </b>ShoppingItem is a class that extends LinearLayout
+	 * which consists of a TextView that stores the name of the shopping list
+	 * item, another TextView that stores the quantity, and a checkbox which
+	 * tells whether the item is bought/not bought.
 	 * </p>
 	 */
 	private class ShoppingItem extends LinearLayout {
 
-		private boolean bought; // The boolean that tells whether this item is bought.
+		private boolean bought; // The boolean that tells whether this item is
+								// bought.
 		private int quantity; // The amount of item in this shopping item.
 		private String name; // The name of the shopping list item.
 
@@ -273,7 +297,7 @@ public class Shop extends ListActivity {
 			this.setQuantity(quantity);
 			// Set the LinearLayout orientation to horizontal.
 			this.setOrientation(HORIZONTAL);
-			
+
 			// Initialize the itemNameTextView values.
 			TextView itemNameTextView = new TextView(context);
 			itemNameTextView.setWidth((int) context.getResources()
@@ -292,7 +316,8 @@ public class Shop extends ListActivity {
 					.getDimension(R.dimen.quantity_width));
 			itemQuantityTextView.setText(Integer.toString(quantity));
 
-			// Create the check box and set its listener so that it changes the value of bought.
+			// Create the check box and set its listener so that it changes the
+			// value of bought.
 			// Each time the value changes.
 			CheckBox checkBox = new CheckBox(context);
 			checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -303,7 +328,7 @@ public class Shop extends ListActivity {
 					setBought((isChecked) ? true : false);
 				} // End of onCheckedChanged method
 			});// End of onCheckedChangeListener method.
-			
+
 			// Add the views to this object.
 			this.addView(itemNameTextView);
 			this.addView(itemQuantityTextView);
@@ -359,11 +384,12 @@ public class Shop extends ListActivity {
 	 * <b>Date: </b>November 13, 2012
 	 * </p>
 	 * <p>
-	 * <b>Description: </b>ItemViewAdapter is the adapter that puts the ShoppingItem views into the ListView.
+	 * <b>Description: </b>ItemViewAdapter is the adapter that puts the
+	 * ShoppingItem views into the ListView.
 	 * </p>
 	 */
 	private class ItemViewAdapter extends ArrayAdapter<ArrayList<String>> {
-		
+
 		public ItemViewAdapter(Context context, int resource,
 				int textViewResourceId, List<ArrayList<String>> items) {
 			super(context, resource, textViewResourceId, items);
@@ -372,7 +398,8 @@ public class Shop extends ListActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// Override the getView and use the shoppingItems ArrayList as the views to be shown on screen.
+			// Override the getView and use the shoppingItems ArrayList as the
+			// views to be shown on screen.
 			return shoppingItems.get(position);
 		}// End of getView
 	} // End of ItemViewAdapter class
